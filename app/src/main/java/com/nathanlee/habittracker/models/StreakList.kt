@@ -2,18 +2,22 @@ class StreakList() {
     var streaks = mutableListOf<Streak>()
     var longest = 0
 
-    // Add an existing streak
-    fun addStreak(streak: Streak) {
+    /*
+    Add an existing streak
+     */
+    fun add(streak: Streak) {
         streaks.add(streak)
 
         if (streaks.isEmpty()) {
             longest = streak.length
-        } else if (streak.isLonger(streaks[streaks.size - 1])) {
+        } else if (streak.length > longest){
             longest = streak.length
         }
     }
 
-    // Merge two streaks when the start/end of two streaks match
+    /*
+    Merge two streaks when the start/end of two streaks match
+     */
     fun mergeStreaks(first: Streak, second: Streak) {
         var firstIndex = this.find(0, streaks.size - 1, first.start)
         var secondIndex = this.find(0, streaks.size - 1, second.start)
@@ -39,18 +43,16 @@ class StreakList() {
         }
     }
 
-    // Insert a Timestamp and edits an existing streak or creates a new streak
+    /*
+    Insert a Timestamp and edits an existing streak
+    Or creates a new streak
+     */
     fun editStreak(date: Timestamp, index: Int): Int {
-        var isLongest = false
         var streakIndex = index
         var editedStreakIndex: Int = -5
 
         if (index < 0) {
             streakIndex *= -1
-        }
-
-        if (longest == streaks[streakIndex].length) {
-            isLongest = true
         }
 
         when (streaks[streakIndex].isDateWithin(date)) {
@@ -96,7 +98,9 @@ class StreakList() {
         return editedStreakIndex
     }
 
-    // Go through all streaks and determine the longest
+    /*
+    Go through all streaks and determine the longest
+     */
     fun findLongestStreak(): Int {
         var longestStreak = 0
 
@@ -109,9 +113,10 @@ class StreakList() {
         return longestStreak
     }
 
-    // Find a streak given a Timestamp
+    /*
+    Find a streak given a Timestamp. If not found, gives the closest index as a negative
+     */
     fun find(l: Int, r: Int, x: Timestamp): Int {
-
         var mid: Int = l + (r - l) / 2
         if (r >= l) {
             if (streaks[mid].isDateWithin(x) == 0) {
@@ -119,13 +124,16 @@ class StreakList() {
             }
 
             if (streaks[mid].isDateWithin(x) == -1) {
+                if (mid == 0){
+                    return 0
+                }
                 return find(l, mid - 1, x)
             }
 
             return find(mid + 1, r, x)
         }
 
-        return -1 * mid
+        return -1 * (mid - 1)
     }
 
 }

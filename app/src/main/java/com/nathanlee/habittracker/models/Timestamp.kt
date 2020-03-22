@@ -6,8 +6,9 @@ data class Timestamp(val date: String) {
     var monthInt = date.substring(3, 5).toInt()
     var dayInt = date.substring(0, 2).toInt()
 
-
-    // See which day comes first between the two timestamps
+    /*
+    See which day comes first between the two timestamps
+     */
     fun compareTo(day: Timestamp): Int {
         val dateFormat = SimpleDateFormat("dd/MM/yyyy")
         val compareTimestamp = dateFormat.parse(day.date)
@@ -19,9 +20,10 @@ data class Timestamp(val date: String) {
         return 0
     }
 
-    // Get the day before this timestamp
+    /*
+    Get the day before this timestamp
+     */
     fun getPreviousDay(): String {
-
         var previousYear: Int
         var previousMonth: Int
         var previousDay: Int
@@ -51,9 +53,10 @@ data class Timestamp(val date: String) {
 
     }
 
-    // Get day after this timestamp
+    /*
+    Get day after this timestamp
+     */
     fun getNextDay(): String {
-
         var tomorrowYear: Int
         var tomorrowMonth: Int
         var tomorrowDay: Int
@@ -82,7 +85,9 @@ data class Timestamp(val date: String) {
         return dayFormat + "/" + monthFormat + "/" + yearFormat
     }
 
-    // Checks if this timestamp is during a leap year
+    /*
+    Checks if this timestamp is during a leap year
+     */
     fun isLeapYear(): IntArray {
         if (yearInt % 4 == 0 && (yearInt % 100 != 0 || yearInt % 400 == 100)) {
             return intArrayOf(31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
@@ -91,9 +96,10 @@ data class Timestamp(val date: String) {
         return intArrayOf(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
     }
 
-    // Check if the given year is a leap year
+    /*
+    Check if the given year is a leap year
+     */
     fun isLeapYear(year: Int): Boolean {
-
         if (year % 4 == 0 && (year % 100 != 0 || year % 400 == 100)) {
             return true
         }
@@ -101,7 +107,9 @@ data class Timestamp(val date: String) {
         return false
     }
 
-    // Counts the number of days that have passed this year
+    /*
+    Counts the number of days that have passed this year
+     */
     fun getDayOfYear(): Int {
         var sum = 0
         var daysInMonth: IntArray = isLeapYear()
@@ -115,17 +123,22 @@ data class Timestamp(val date: String) {
         return sum
     }
 
-    // Get the day of the week (Monday, Tuesday, etc.)
+    /*
+    Get the day of the week (Monday, Tuesday, etc.)
+     */
     fun getDayOfWeek(day: Timestamp): Int {
         var year = day.date.substring(day.date.length - 4).toInt()
         var month = day.date.substring(3, 5).toInt()
         var day = day.date.substring(0, 2).toInt()
 
+        //TODO: decide whether I want to use API 15. Do I even need this?
         val localDate = LocalDate.of(year, month, day)
         return DayOfWeek.from(localDate).getValue()
     }
 
-    // Add "number" amount of days and returns the date
+    /*
+    Add "number" amount of days and returns the date
+     */
     fun getDaysAfter(number: Int): Timestamp {
         var year = yearInt
         var month = monthInt
@@ -166,7 +179,9 @@ data class Timestamp(val date: String) {
         return Timestamp(dayFormat + "/" + monthFormat + "/" + yearFormat)
     }
 
-    // Subtract "number" amount of days and returns the date
+    /*
+    Subtract "number" amount of days and returns the date
+     */
     fun getDaysBefore(number: Int): Timestamp {
         var year = yearInt
         var month = monthInt
@@ -201,7 +216,17 @@ data class Timestamp(val date: String) {
         return Timestamp(dayFormat + "/" + monthFormat + "/" + yearFormat)
     }
 
-    // Gives date
+    /*
+    Given two dates, determines if this timestamp falls between the two given dates (inclusive)
+     */
+    fun isWithin(start: Timestamp, end: Timestamp): Boolean{
+        if (start.compareTo(this) != 1 && end.compareTo(this) != -1) { return true }
+        return false
+    }
+
+    /*
+    Returns the date as a string
+     */
     override fun toString(): String {
         return date
     }

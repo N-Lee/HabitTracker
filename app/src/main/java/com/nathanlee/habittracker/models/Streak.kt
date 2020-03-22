@@ -1,7 +1,9 @@
 class Streak(var start: Timestamp, var end: Timestamp) {
     var length: Int = streakLength()
 
-    // How many days is the current streak
+    /*
+    How many days is the current streak
+     */
     fun streakLength(): Int {
         var length = 0
 
@@ -42,7 +44,9 @@ class Streak(var start: Timestamp, var end: Timestamp) {
         return true
     }
 
-    // Is the timestamp within the streak
+    /*
+    Is the timestamp within the streak
+     */
     fun isDateWithin(date: Timestamp): Int {
         val dateOfYear = date.getDayOfYear()
         val dateYear = date.yearInt
@@ -74,7 +78,9 @@ class Streak(var start: Timestamp, var end: Timestamp) {
         return -1
     }
 
-    // Gives start and end date of streak
+    /*
+    Returns start and end date of streak
+     */
     override fun toString(): String {
         return start.toString() + " " + end.toString()
     }

@@ -1,4 +1,4 @@
-package com.nathanlee.habbittracker
+package com.nathanlee.habittracker
 
 import org.junit.Test
 

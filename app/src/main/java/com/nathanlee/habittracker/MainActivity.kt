@@ -1,4 +1,4 @@
-package com.nathanlee.habbittracker
+package com.nathanlee.habittracker
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
