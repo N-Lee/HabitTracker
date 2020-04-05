@@ -3,4 +3,18 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+
+    <color name="darkThemeBackground">#525151</color>
+    <color name="darkThemeTitle">#FFFFFF</color>
+    <color name="darkThemeHint">#727272</color>
+
+    <color name="darkThemeGrey">#999999</color>
+    <color name="darkThemeGreen">#81C784</color>
+    <color name="darkThemeOrange">#E57373</color>
+    <color name="darkThemePink">#F06292</color>
+    <color name="darkThemePurple">#A887EE</color>
+    <color name="darkThemeBlue">#64B5F6</color>
+    <color name="darkThemeYellow">#C9BF67</color>
+
+
 </resources>

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="300dp"
+    android:layout_height="450dp"
+    android:layout_gravity="center"
+    android:background="@color/darkThemeBackground"
+    android:orientation="horizontal"
+    android:padding="5dp">
+
+    <RelativeLayout
+        android:layout_width="0dip"
+        android:layout_height="fill_parent"
+        android:layout_weight="0.05"></RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="0dip"
+        android:layout_height="fill_parent"
+        android:layout_weight="0.9">
+
+        <!-- This is the part that's 70% of the total width. I'm inserting a LinearLayout and buttons.-->
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/popupTitleText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="15dp"
+                android:textColor="@color/darkThemeTitle"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/habitNameText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints="@string/habit_popup_name"
+                android:backgroundTint="@color/darkThemeTitle"
+                android:ems="10"
+                android:hint="@string/habit_popup_name"
+                android:inputType="textPersonName"
+                android:textColor="@color/darkThemeGrey"
+                android:textColorHint="@color/darkThemeHint"
+                app:layout_constraintHorizontal_weight="1.00"
+                tools:targetApi="o" />
+
+            <EditText
+                android:id="@+id/habitDescriptionText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints="@string/habit_popup_description"
+                android:backgroundTint="@color/darkThemeTitle"
+                android:ems="10"
+                android:hint="@string/habit_popup_description"
+                android:inputType="textPersonName"
+                android:textColor="@color/darkThemeTitle"
+                android:textColorHint="@color/darkThemeHint"
+                tools:targetApi="o" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/habit_popup_select_colour"
+                android:textColor="@color/darkThemeTitle" />
+
+            <RadioGroup
+                android:id="@+id/colourGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checkedButton="@id/blueRadio"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/greyRadio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/darkThemeGrey" />
+
+                <RadioButton
+                    android:id="@+id/blueRadio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/darkThemeBlue" />
+
+                <RadioButton
+                    android:id="@+id/greenRadio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/darkThemeGreen" />
+
+                <RadioButton
+                    android:id="@+id/orangeRadio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/darkThemeOrange" />
+
+                <RadioButton
+                    android:id="@+id/pinkRadio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/darkThemePink" />
+
+                <RadioButton
+                    android:id="@+id/yellowRadio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/darkThemeYellow" />
+
+                <RadioButton
+                    android:id="@+id/purpleRadio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/darkThemePurple" />
+
+            </RadioGroup>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/cancelText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/saveText"
+                    android:layout_toStartOf="@+id/saveText"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:text="@string/habit_popup_cancel"
+                    android:textColor="@color/darkThemeTitle" />
+
+                <TextView
+                    android:id="@+id/saveText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="0dp"
+                    android:text="@string/habit_popup_save"
+                    android:textColor="@color/darkThemeTitle" />
+            </RelativeLayout>
+
+
+        </LinearLayout><!-- 70% Width End-->
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="0dip"
+        android:layout_height="fill_parent"
+        android:layout_weight="0.05"></RelativeLayout>
+
+
+</LinearLayout>

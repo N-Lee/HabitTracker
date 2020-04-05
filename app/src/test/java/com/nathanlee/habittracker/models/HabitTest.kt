@@ -1,10 +1,8 @@
 package com.nathanlee.habittracker.models
 
 import org.junit.Test
-import Habit
 import Timestamp
 import ReadWriteJson
-import Streak
 
 class HabitTest {
 

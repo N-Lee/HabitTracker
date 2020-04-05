@@ -1,8 +1,6 @@
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import android.widget.Toast
-import android.content.Context.MODE_PRIVATE
 import com.google.gson.reflect.TypeToken
+import com.nathanlee.habittracker.models.Habit
 import java.io.*
 
 

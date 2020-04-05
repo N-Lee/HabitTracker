@@ -1,17 +1,35 @@
-import kotlin.math.abs
+package com.nathanlee.habittracker.models
+
+import Completion
+import CompletionList
+import Frequency
+import Streak
+import StreakList
+import Timestamp
+import android.os.Parcel
+import android.os.Parcelable
 
 class Habit(
     var name: String,
     var description: String,
     var colour: String,
-    var weekendsOff: Boolean,
     var numerator: Int,
     var denominator: Int
-) {
+) : Parcelable {
 
     var frequency: Frequency = Frequency(numerator, denominator)
     var completions: CompletionList = CompletionList()
     var streaks: StreakList = StreakList()
+
+    constructor(parcel: Parcel) : this(
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readInt(),
+        parcel.readInt()
+    ) {
+
+    }
 
     /*
     Given a date, update the streak and completion status
@@ -80,7 +98,7 @@ class Habit(
         var index: Int
         var startDate: Timestamp
 
-        if (startStreak < 0 ){
+        if (startStreak < 0) {
             startStreak *= -1
             startDate = streaks.streaks[startStreak].start
         } else {
@@ -89,15 +107,15 @@ class Habit(
 
         index = completions.find(0, completions.completions.size, startDate)
 
-        while (index < completions.completions.size){
+        while (index < completions.completions.size) {
             if (isInStreak) {
                 var startIndex = index
-                if (isFrequencyMet(index)){
+                if (isFrequencyMet(index)) {
                     index += frequency.denominator
-                    markCompletions(startIndex, index-1)
+                    markCompletions(startIndex, index - 1)
                 } else {
                     var lastCompletedInPeriod = lastCompleteInPeriod(index)
-                    if (lastCompletedInPeriod == -1){
+                    if (lastCompletedInPeriod == -1) {
                         startIndex -= frequency.denominator
                         --index
                     } else {
@@ -108,8 +126,8 @@ class Habit(
                     ++index
                 }
             } else {
-                when (completions.completions[index].status){
-                    0,1 -> {
+                when (completions.completions[index].status) {
+                    0, 1 -> {
                         completions.completions[index].status = 0
                         index++
                     }
@@ -136,12 +154,12 @@ class Habit(
         var endIndex = _endIndex
         var count = 0
 
-        if (endIndex > completions.completions.size){
+        if (endIndex > completions.completions.size) {
             endIndex = completions.completions.size - 1
         }
 
         for (i in startIndex..endIndex) {
-            when (completions.completions[i].status){
+            when (completions.completions[i].status) {
                 0 -> {
                     completions.completions[i].status = 1
                 }
@@ -155,7 +173,7 @@ class Habit(
                 3 -> {
                     count++
 
-                    if (count <= frequency.numerator){
+                    if (count <= frequency.numerator) {
                         var test = completions.completions[i].timestamp
                         completions.completions[i].status = 2
                     }
@@ -243,9 +261,9 @@ class Habit(
     }
 
     /*
-    Empties streak list, goes through every date in completions, and adds all streaks
+    Empties streak list, goes through every date in completions starting at given date, and adds all streaks
      */
-    fun updatePeriodStreak(date: Timestamp){
+    fun updatePeriodStreak(date: Timestamp) {
         var streakIndex = Math.abs(streaks.find(0, streaks.streaks.size - 1, date))
         var index: Int
         var isStartStreak = true
@@ -254,25 +272,28 @@ class Habit(
         lateinit var endTimestamp: Timestamp
         lateinit var newStreak: Streak
 
-        if (streaks.streaks.size == 0){
+        if (streaks.streaks.size == 0) {
             newStreak = Streak(date, date)
             streaks.add(newStreak)
         }
 
-        if (date.compareTo(streaks.streaks[streakIndex].start) == -1){
+        if (date.compareTo(streaks.streaks[streakIndex].start) == -1) {
             index = 0
         } else {
-            index = completions.find(0, completions.completions.size - 1, streaks.streaks[streakIndex].start)
+            index = completions.find(
+                0,
+                completions.completions.size - 1,
+                streaks.streaks[streakIndex].start
+            )
         }
 
         streaks.streaks.subList(streakIndex, streaks.streaks.size).clear()
         streaks.longest = 0
 
         while (!isLastPeriod) {
-            var today = completions.completions[index].timestamp
             while (isStartStreak && (completions.completions[index].status != 2 && completions.completions[index].status != 3)) {
                 index++
-                if (index > completions.completions.size - 1){
+                if (index > completions.completions.size - 1) {
                     return
                 }
             }
@@ -307,7 +328,7 @@ class Habit(
                     streaks.add(newStreak)
                     isStartStreak = true
                     var firstCompleteNextPeriod = firstCompleteInPeriod(lastIndex + 1)
-                    if (firstCompleteNextPeriod == -1){
+                    if (firstCompleteNextPeriod == -1) {
                         index = lastIndex + frequency.denominator
                     } else {
                         index = firstCompleteNextPeriod
@@ -324,9 +345,31 @@ class Habit(
                 }
             }
 
-            if (index > completions.completions.size){
+            if (index > completions.completions.size) {
                 index = completions.completions.size - 1
             }
+        }
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(name)
+        parcel.writeString(description)
+        parcel.writeString(colour)
+        parcel.writeInt(numerator)
+        parcel.writeInt(denominator)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<Habit> {
+        override fun createFromParcel(parcel: Parcel): Habit {
+            return Habit(parcel)
+        }
+
+        override fun newArray(size: Int): Array<Habit?> {
+            return arrayOfNulls(size)
         }
     }
 }
