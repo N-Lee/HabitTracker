@@ -1,13 +1,15 @@
+
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.nathanlee.habittracker.models.Habit
-import java.io.*
+import java.io.File
+import java.io.FileWriter
 
 
-class ReadWriteJson() {
+class ReadWriteJson (dir: String) {
     val GSON = GsonBuilder().setPrettyPrinting().create()
     val FILE_NAME = "Habits.json"
-    val DIR = "src/main/java/com/nathanlee/habittracker/files"
+    val DIR = dir
 
     inline fun <reified T> genericType() = object : TypeToken<T>() {}.type
 
@@ -15,13 +17,11 @@ class ReadWriteJson() {
     Save all habits to json
      */
     fun write(habits: MutableList<Habit>) {
-        var jsonString = GSON.toJson(habits)
-        var file = FileWriter(File(DIR, FILE_NAME))
+        val jsonString = GSON.toJson(habits)
+        val file = FileWriter(File(DIR, FILE_NAME))
 
         file.write(jsonString)
         file.close()
-
-
     }
 
     /*

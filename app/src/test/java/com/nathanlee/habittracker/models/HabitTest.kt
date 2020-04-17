@@ -1,14 +1,17 @@
 package com.nathanlee.habittracker.models
 
-import org.junit.Test
 import Timestamp
-import ReadWriteJson
+import org.junit.Test
 
 class HabitTest {
 
     @Test
     fun updateAllCompletions() {
 
+        var today = Timestamp("17/03/2020")
+        println(today.getDayOfWeek(today))
+
+        /*
         val rw = ReadWriteJson()
         val test = rw.read()
         var habit = test[0]
@@ -31,6 +34,8 @@ class HabitTest {
         var mList: MutableList<Habit> = mutableListOf()
         mList.add(habit)
         rw.write(mList)
+
+         */
 
     }
 }

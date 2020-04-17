@@ -2815,7 +2815,7 @@
           }
         },
         {
-          "status": 1,
+          "status": 0,
           "timestamp": {
             "yearInt": 2020,
             "monthInt": 12,
@@ -2824,7 +2824,7 @@
           }
         },
         {
-          "status": 1,
+          "status": 0,
           "timestamp": {
             "yearInt": 2020,
             "monthInt": 12,
@@ -2833,7 +2833,7 @@
           }
         },
         {
-          "status": 2,
+          "status": 0,
           "timestamp": {
             "yearInt": 2021,
             "monthInt": 1,
@@ -4037,12 +4037,27 @@
           }
         },
         {
-          "length": 29,
+          "length": 13,
           "start": {
             "yearInt": 2020,
             "monthInt": 12,
             "dayInt": 17,
             "date": "17/12/2020"
+          },
+          "end": {
+            "yearInt": 2020,
+            "monthInt": 12,
+            "dayInt": 29,
+            "date": "29/12/2020"
+          }
+        },
+        {
+          "length": 13,
+          "start": {
+            "yearInt": 2021,
+            "monthInt": 1,
+            "dayInt": 2,
+            "date": "02/01/2021"
           },
           "end": {
             "yearInt": 2021,
@@ -4142,11 +4157,11 @@
           }
         }
       ],
-      "longest": 29
+      "longest": 21
     },
     "name": "Play Violin",
     "description": "",
-    "colour": "",
+    "colour": 2130968618,
     "weekendsOff": false,
     "numerator": 5,
     "denominator": 8

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="AddHabit"
+        android:id="@+id/addHabitAppBar"
+        app:showAsAction="always"
+        android:orderInCategory="100"
+        android:icon="@drawable/add_habit_image"/>
+
+    <item android:title="Settings"
+        android:id="@+id/settingsAppBar"
+        android:orderInCategory="101"
+        app:showAsAction="always"
+        android:icon="@drawable/settings_button_image"/>
+</menu>

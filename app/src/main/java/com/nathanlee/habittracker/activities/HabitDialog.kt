@@ -2,117 +2,118 @@ package com.nathanlee.habittracker.activities
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
 import android.widget.RadioGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatDialogFragment
-import androidx.core.content.ContextCompat
-import com.nathanlee.habittracker.R
+import com.nathanlee.habittracker.models.ColourManager.selectColour
+import com.nathanlee.habittracker.models.Habit
 
-class HabitDialog: AppCompatDialogFragment() {
-    lateinit var colourRadioGroup: RadioGroup
-    lateinit var habitNameTextView: TextView
-    lateinit var titleTextView: TextView
-    lateinit var habitNameEditText: EditText
-    lateinit var habitDescriptionEditTextView: EditText
-    lateinit var cancelTextView: TextView
-    lateinit var saveTextView: TextView
+class HabitDialog : AppCompatDialogFragment() {
+    private lateinit var colourRadioGroup: RadioGroup
+    private lateinit var habitNameTextView: TextView
+    private lateinit var titleTextView: TextView
+    private lateinit var habitNameEditText: EditText
+    private lateinit var habitDescriptionEditTextView: EditText
+    private lateinit var habitNumeratorEditTextView: EditText
+    private lateinit var habitDenominatorEditText: EditText
+    private lateinit var cancelTextView: TextView
+    private lateinit var saveTextView: TextView
+    private lateinit var listener: HabitDialogListener
+    private lateinit var error: Toast
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+
+        try {
+            listener = context as HabitDialogListener
+        } catch (e: ClassCastException) {
+            throw ClassCastException(context.toString() + " must implement HabitDialogListener")
+        } catch (e: Exception) {
+            throw Exception("Error")
+        }
+    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         var builder = AlertDialog.Builder(activity)
         val inflater = LayoutInflater.from(context)
-        val view = inflater.inflate(R.layout.habit_popup, null)
+        val view = inflater.inflate(com.nathanlee.habittracker.R.layout.habit_popup, null)
 
         builder.setView(view)
-            .setTitle("Create com.nathanlee.habittracker.models.Habit")
 
-        habitNameTextView = view.findViewById<TextView>(R.id.habitNameText)
+        habitNameTextView = view.findViewById(com.nathanlee.habittracker.R.id.habitNameText)
 
-        colourRadioGroup = view.findViewById<RadioGroup>(R.id.colourGroup)
-        colourRadioGroup.setOnCheckedChangeListener{ _, colourId ->
-
-            habitNameTextView.setTextColor(selectColour(colourId))
-
+        colourRadioGroup = view.findViewById(com.nathanlee.habittracker.R.id.colourGroup)
+        colourRadioGroup.setOnCheckedChangeListener { _, colourId ->
+            habitNameTextView.setTextColor(selectColour(colourId, requireContext()))
         }
 
-        titleTextView = view.findViewById<TextView>(R.id.popupTitleText)
-        titleTextView.setText(R.string.habit_popup_title_new)
+        titleTextView = view.findViewById(com.nathanlee.habittracker.R.id.popupTitleText)
+        titleTextView.setText(com.nathanlee.habittracker.R.string.habit_popup_title_new)
 
+        habitNameEditText = view.findViewById(com.nathanlee.habittracker.R.id.habitNameText)
+        habitNameEditText.setTextColor(
+            selectColour(
+                colourRadioGroup.checkedRadioButtonId,
+                requireContext()
+            )
+        )
 
-        habitNameEditText = view.findViewById<EditText>(R.id.habitNameText)
-        habitNameEditText.setTextColor(selectColour(colourRadioGroup.checkedRadioButtonId))
+        habitDescriptionEditTextView =
+            view.findViewById(com.nathanlee.habittracker.R.id.habitDescriptionText)
 
-        habitDescriptionEditTextView = view.findViewById<EditText>(R.id.habitDescriptionText)
+        habitNumeratorEditTextView =
+            view.findViewById(com.nathanlee.habittracker.R.id.habitNumeratorEditText)
+        habitDenominatorEditText =
+            view.findViewById(com.nathanlee.habittracker.R.id.habitDenominatorEditText)
 
-        cancelTextView = view.findViewById<TextView>(R.id.cancelText)
+        cancelTextView = view.findViewById(com.nathanlee.habittracker.R.id.cancelText)
         cancelTextView.setOnClickListener {
             closeNewHabitPopup(cancelTextView)
         }
 
-        saveTextView = view.findViewById<TextView>(R.id.saveText)
+        saveTextView = view.findViewById(com.nathanlee.habittracker.R.id.saveText)
         saveTextView.setOnClickListener {
             closeNewHabitPopup(saveTextView)
         }
+
+        error = Toast.makeText(requireContext(), null, Toast.LENGTH_LONG)
 
         return builder.create()
     }
 
     fun closeNewHabitPopup(v: View) {
-        if (v.id == R.id.saveText) {
-            var selectedColour = colourRadioGroup.checkedRadioButtonId
+        if (v.id == com.nathanlee.habittracker.R.id.saveText) {
+            var colour = colourRadioGroup.checkedRadioButtonId
             var name = habitNameEditText.text.toString()
             var description = habitDescriptionEditTextView.text.toString()
+            var numerator = habitNumeratorEditTextView.text.toString().toInt()
+            var denominator = habitDenominatorEditText.text.toString().toInt()
 
-            // TODO: StartIntent to send info
+            if (numerator > denominator) {
+                error = Toast.makeText(
+                        requireContext(),
+                        "First number cannot be greater than the second number",
+                        Toast.LENGTH_SHORT
+                    )
+                error.show()
+                return
+            }
+
+            var habit = Habit(name, description, colour, numerator, denominator)
+            listener.sendHabit(habit)
         }
 
         this.dismiss()
 
     }
 
-    fun selectColour(colourId: Int): Int{
-        val darkTheme: IntArray = intArrayOf(
-            R.color.darkThemeGrey,
-            R.color.darkThemeBlue,
-            R.color.darkThemeGreen,
-            R.color.darkThemeOrange,
-            R.color.darkThemePink,
-            R.color.darkThemePurple,
-            R.color.darkThemeYellow
-        )
-
-        when (colourId) {
-            R.id.greyRadio -> {
-                return ContextCompat.getColor(requireContext(), darkTheme[0])
-            }
-            R.id.blueRadio -> {
-                return ContextCompat.getColor(requireContext(), darkTheme[1])
-            }
-
-            R.id.greenRadio -> {
-                return ContextCompat.getColor(requireContext(), darkTheme[2])
-            }
-
-            R.id.orangeRadio -> {
-                return ContextCompat.getColor(requireContext(), darkTheme[3])
-            }
-
-            R.id.pinkRadio -> {
-                return ContextCompat.getColor(requireContext(), darkTheme[4])
-            }
-
-            R.id.purpleRadio -> {
-                return ContextCompat.getColor(requireContext(), darkTheme[5])
-            }
-
-            R.id.yellowRadio -> {
-                return ContextCompat.getColor(requireContext(), darkTheme[6])
-            }
-        }
-
-        return ContextCompat.getColor(requireContext(), darkTheme[0])
+    interface HabitDialogListener {
+        fun sendHabit(habit: Habit)
     }
 }

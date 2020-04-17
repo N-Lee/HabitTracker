@@ -1,7 +1,7 @@
-import java.text.SimpleDateFormat
-import java.time.*
 
-data class Timestamp(val date: String) {
+import java.text.SimpleDateFormat
+
+data class Timestamp(var date: String) {
     var yearInt = date.substring(date.length - 4).toInt()
     var monthInt = date.substring(3, 5).toInt()
     var dayInt = date.substring(0, 2).toInt()
@@ -12,6 +12,7 @@ data class Timestamp(val date: String) {
     fun compareTo(day: Timestamp): Int {
         val dateFormat = SimpleDateFormat("dd/MM/yyyy")
         val compareTimestamp = dateFormat.parse(day.date)
+
         if (dateFormat.parse(date).after(compareTimestamp)) {
             return 1 // this.date is after the compared day
         } else if (dateFormat.parse(date).before(compareTimestamp)) {
@@ -112,7 +113,7 @@ data class Timestamp(val date: String) {
      */
     fun getDayOfYear(): Int {
         var sum = 0
-        var daysInMonth: IntArray = isLeapYear()
+        val daysInMonth: IntArray = isLeapYear()
 
         for (i in 0 until monthInt - 1) {
             sum += daysInMonth[i]
@@ -126,14 +127,11 @@ data class Timestamp(val date: String) {
     /*
     Get the day of the week (Monday, Tuesday, etc.)
      */
-    fun getDayOfWeek(day: Timestamp): Int {
-        var year = day.date.substring(day.date.length - 4).toInt()
-        var month = day.date.substring(3, 5).toInt()
-        var day = day.date.substring(0, 2).toInt()
-
-        //TODO: decide whether I want to use API 15. Do I even need this?
-        val localDate = LocalDate.of(year, month, day)
-        return DayOfWeek.from(localDate).getValue()
+    fun getDayOfWeek(day: Timestamp): String {
+        val calendarNumber = SimpleDateFormat("dd/MM/yyyy")
+        val date = calendarNumber.parse(day.date)
+        val weekday = SimpleDateFormat("EE")
+        return weekday.format(date)
     }
 
     /*
@@ -219,8 +217,10 @@ data class Timestamp(val date: String) {
     /*
     Given two dates, determines if this timestamp falls between the two given dates (inclusive)
      */
-    fun isWithin(start: Timestamp, end: Timestamp): Boolean{
-        if (start.compareTo(this) != 1 && end.compareTo(this) != -1) { return true }
+    fun isWithin(start: Timestamp, end: Timestamp): Boolean {
+        if (start.compareTo(this) != 1 && end.compareTo(this) != -1) {
+            return true
+        }
         return false
     }
 

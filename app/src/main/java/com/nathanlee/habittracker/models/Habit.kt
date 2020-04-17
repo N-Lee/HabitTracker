@@ -12,7 +12,7 @@ import android.os.Parcelable
 class Habit(
     var name: String,
     var description: String,
-    var colour: String,
+    var colour: Int,
     var numerator: Int,
     var denominator: Int
 ) : Parcelable {
@@ -24,7 +24,7 @@ class Habit(
     constructor(parcel: Parcel) : this(
         parcel.readString() ?: "",
         parcel.readString() ?: "",
-        parcel.readString() ?: "",
+        parcel.readInt(),
         parcel.readInt(),
         parcel.readInt()
     ) {
@@ -354,7 +354,7 @@ class Habit(
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(name)
         parcel.writeString(description)
-        parcel.writeString(colour)
+        parcel.writeInt(colour)
         parcel.writeInt(numerator)
         parcel.writeInt(denominator)
     }

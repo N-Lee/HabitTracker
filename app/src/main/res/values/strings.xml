@@ -1,12 +1,16 @@
 <resources>
     <string name="app_name">Habit Tracker</string>
 
+    <string name="header_table">Habit</string>
+
     <string name="habit_popup_title_new">Create Habit</string>
     <string name="habit_popup_title_edit">Edit Habit</string>
     <string name="habit_popup_name">Name</string>
     <string name="habit_popup_description">Describe habit</string>
     <string name="habit_popup_save">Save</string>
     <string name="habit_popup_cancel">Cancel</string>
-
     <string name="habit_popup_select_colour">Select a colour</string>
+    <string name="habit_popup_repeat">Will repeat </string>
+    <string name="habit_popup_times"> times in </string>
+    <string name="habit_popup_days"> days</string>
 </resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="header_relative_layout" type="id"/>
+    <item name="column_header_relative_layout" type="id"/>
+    <item name="row_header_relative_layout" type="id"/>
+    <item name="table_relative_layout" type="id"/>
+
+    <item name="column_header_table_layout" type="id"/>
+</resources>

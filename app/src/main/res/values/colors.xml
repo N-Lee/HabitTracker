@@ -8,6 +8,8 @@
     <color name="darkThemeTitle">#FFFFFF</color>
     <color name="darkThemeHint">#727272</color>
 
+    <color name="darkThemeTableBackground">#303030</color>
+
     <color name="darkThemeGrey">#999999</color>
     <color name="darkThemeGreen">#81C784</color>
     <color name="darkThemeOrange">#E57373</color>

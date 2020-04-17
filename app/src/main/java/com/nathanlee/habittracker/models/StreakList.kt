@@ -1,4 +1,4 @@
-class StreakList() {
+class StreakList {
     var streaks = mutableListOf<Streak>()
     var longest = 0
 
@@ -19,8 +19,8 @@ class StreakList() {
     Merge two streaks when the start/end of two streaks match
      */
     fun mergeStreaks(first: Streak, second: Streak) {
-        var firstIndex = this.find(0, streaks.size - 1, first.start)
-        var secondIndex = this.find(0, streaks.size - 1, second.start)
+        val firstIndex = this.find(0, streaks.size - 1, first.start)
+        val secondIndex = this.find(0, streaks.size - 1, second.start)
 
         if (Timestamp(first.end.getNextDay()).compareTo(second.start) == 0) {
             streaks[firstIndex].end = second.end
@@ -59,10 +59,10 @@ class StreakList() {
             // Is within a streak
             0 -> {
                 if (date.getDayOfYear() == streaks[streakIndex].start.getDayOfYear() && date.yearInt == streaks[streakIndex].start.yearInt) {
-                    val nextDay = Timestamp(date.getNextDay())
+                    var nextDay = Timestamp(date.getNextDay())
                     streaks[streakIndex].start = nextDay
                 } else if (date.getDayOfYear() == streaks[streakIndex].end.getDayOfYear() && date.yearInt == streaks[streakIndex].end.yearInt) {
-                    val previousDay = Timestamp(date.getPreviousDay())
+                    var previousDay = Timestamp(date.getPreviousDay())
                     streaks[streakIndex].end = previousDay
                 } else {
                     var newStreak = Streak(Timestamp(date.getNextDay()), streaks[streakIndex].end)
@@ -118,6 +118,7 @@ class StreakList() {
      */
     fun find(l: Int, r: Int, x: Timestamp): Int {
         var mid: Int = l + (r - l) / 2
+
         if (r >= l) {
             if (streaks[mid].isDateWithin(x) == 0) {
                 return mid
