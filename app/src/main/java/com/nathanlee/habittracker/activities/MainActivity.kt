@@ -19,58 +19,56 @@ import com.nathanlee.habittracker.models.Habit
 import java.text.SimpleDateFormat
 import java.util.*
 
-// TODO: Make the completions toggle in the table
-
 class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
     VerticalScroll.ScrollViewListener, HorizontalScroll.ScrollViewListener {
 
-    val DATE = Date()
-    val SIMPLE_DATE = SimpleDateFormat("dd/MM/yyyy").format(DATE)
-    val TIMESTAMP = Timestamp(SIMPLE_DATE)
+    private val DATE = Date()
+    private val SIMPLE_DATE = SimpleDateFormat("dd/MM/yyyy").format(DATE)
+    private val TIMESTAMP = Timestamp(SIMPLE_DATE)
 
-    val NUMBER_OF_DATES = 12
+    private val NUMBER_OF_DATES = 12
 
-    var CELL_WIDTH = 200
+    private var CELL_WIDTH = 200
 
-    var screenHeight = 0
-    var screenWidth = 0
+    private var screenHeight = 0
+    private var screenWidth = 0
 
-    var leftRelativeLayoutWidth = 0
-    var rightRelativeLayoutWidth = 0
-    var topRelativeLayoutHeight = 0
-    var bottomRelativeLayoutHeight = 0
+    private var leftRelativeLayoutWidth = 0
+    private var rightRelativeLayoutWidth = 0
+    private var topRelativeLayoutHeight = 0
+    private var bottomRelativeLayoutHeight = 0
 
-    var mainActionBar: ActionBar? = null
+    private var mainActionBar: ActionBar? = null
 
-    var dateList = mutableListOf<Timestamp>()
-    var habitList = mutableListOf<Habit>()
+    private var dateList = mutableListOf<Timestamp>()
+    private var habitList = mutableListOf<Habit>()
 
-    lateinit var rw: ReadWriteJson
+    private lateinit var rw: ReadWriteJson
 
-    lateinit var habitDialog: Dialog
+    private lateinit var habitDialog: Dialog
 
-    lateinit var mainRelativeLayout: RelativeLayout
-    lateinit var headerRelativeLayout: RelativeLayout
-    lateinit var columnHeaderRelativeLayout: RelativeLayout
-    lateinit var rowHeaderRelativeLayout: RelativeLayout
-    lateinit var tableRelativeLayout: RelativeLayout
+    private lateinit var mainRelativeLayout: RelativeLayout
+    private lateinit var headerRelativeLayout: RelativeLayout
+    private lateinit var columnHeaderRelativeLayout: RelativeLayout
+    private lateinit var rowHeaderRelativeLayout: RelativeLayout
+    private lateinit var tableRelativeLayout: RelativeLayout
 
-    lateinit var headerTableLayout: TableLayout
-    lateinit var columnHeaderTableLayout: TableLayout
-    lateinit var rowHeaderTableLayout: TableLayout
-    lateinit var tableTableLayout: TableLayout
+    private lateinit var headerTableLayout: TableLayout
+    private lateinit var columnHeaderTableLayout: TableLayout
+    private lateinit var rowHeaderTableLayout: TableLayout
+    private lateinit var tableTableLayout: TableLayout
 
-    lateinit var tableRow: TableRow
-    lateinit var tableRowB: TableRow
+    private lateinit var tableRow: TableRow
+    private lateinit var tableRowB: TableRow
 
-    lateinit var columnHeaderHorizontalScrollView: HorizontalScroll
-    lateinit var tableHorizontalScrollView: HorizontalScroll
+    private lateinit var columnHeaderHorizontalScrollView: HorizontalScroll
+    private lateinit var tableHorizontalScrollView: HorizontalScroll
 
-    lateinit var rowHeaderScrollView: VerticalScroll
-    lateinit var tableScrollView: VerticalScroll
+    private lateinit var rowHeaderScrollView: VerticalScroll
+    private lateinit var tableScrollView: VerticalScroll
 
-    lateinit var editHabitListener: View.OnClickListener
-    lateinit var editStatusListener: View.OnClickListener
+    private lateinit var editHabitListener: View.OnClickListener
+    private lateinit var editStatusListener: View.OnClickListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,15 +93,17 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
             val wantedDate = dateList[pos[1].toInt()]
             val completionsList = wantedHabit.completions
             val wantedCompletion =
-                completionsList.completions[completionsList.find(0, completionsList.completions.size, wantedDate)]
+                completionsList.completions[completionsList.find(
+                    0,
+                    completionsList.completions.size,
+                    wantedDate
+                )]
 
             if (wantedCompletion.status == 2 || wantedCompletion.status == 3) {
-                val newCompletion = Completion(wantedDate, 0)
-                completionsList.edit(newCompletion, 0)
+                wantedHabit.editDate(wantedDate, 0)
                 view.setBackgroundColor(Color.TRANSPARENT)
             } else {
-                val newCompletion = Completion(wantedDate, 2)
-                completionsList.edit(newCompletion, 0)
+                wantedHabit.editDate(wantedDate, 2)
                 view.setBackgroundColor(
                     ColourManager.selectColour(
                         wantedHabit.colour,
@@ -111,6 +111,8 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
                     )
                 )
             }
+
+            rw.write(habitList)
         }
 
         mainRelativeLayout = findViewById(com.nathanlee.habittracker.R.id.mainRelativeLayout)
@@ -126,26 +128,14 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         initializeColumnHeaderTable()
         initializeHabits()
 
+        createEmptyRow()
         for (i in 0 until habitList.size) {
             initializeRowForTable(i)
-            addRowToRowHeader(habitList[i])
+            addRowToRowHeader(habitList[i], i)
             for (j in 0 until dateList.size) {
-                addColumnToTable(i, j, habitList[i])
+                addCellToTable(i, j, habitList[i])
             }
         }
-
-        /*
-        for (i in 0..5) {
-            initializeRowForTable(i)
-            val newHabit = Habit("Habit $i", "Description $i", COLOURS[i], 7, 7)
-            habitList.add(newHabit)
-            addRowToRowHeader(habitList[i])
-            for (j in 0 until dateList.size) {
-                addColumnToTable(habitList.size - 1, j, habitList[i])
-            }
-        }
-
-         */
 
         tableHorizontalScrollView.viewTreeObserver
             .addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
@@ -169,12 +159,6 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
 
     }
 
-    override fun onResume() {
-        super.onResume()
-
-
-    }
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(com.nathanlee.habittracker.R.menu.main, menu)
 
@@ -188,7 +172,7 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
             }
 
             com.nathanlee.habittracker.R.id.settingsAppBar -> {
-                var startIntent = Intent(applicationContext, SettingsActivity::class.java)
+                var startIntent = Intent(applicationContext, DisplayHabitsJson::class.java)
                 startIntent.putExtra("com.nathanlee.habittracker.SOMETHING", "Text has changed")
                 startActivity(startIntent)
             }
@@ -197,20 +181,37 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         return super.onOptionsItemSelected(item)
     }
 
-    fun openHabitDialog() {
+    /*
+    Opens the dialog to create a new habit
+     */
+    private fun openHabitDialog() {
         var newDialog = HabitDialog()
         newDialog.show(supportFragmentManager, "Show com.nathanlee.habittracker.models.Habit")
     }
 
+    /*
+    Retrieves habit info after creating a new habit through the dialog box
+     */
     override fun sendHabit(habit: Habit) {
         initializeRowForTable(habitList.size)
-        habitList.add(habit)
-        addRowToRowHeader(habit)
+
+        habit.completions.edit(Completion(dateList[0], 0), 1)
+        habit.completions.edit(Completion(dateList.last(), 0), 1)
+
+        addRowToRowHeader(habit, habitList.size)
         for (j in 0 until dateList.size) {
-            addColumnToTable(habitList.size - 1, j, habitList[habitList.size - 1])
+            addCellToTable(habitList.size, j, habit)
         }
+
+        columnHeaderHorizontalScrollView.fullScroll(HorizontalScrollView.FOCUS_RIGHT)
+
+        habitList.add(habit)
+        rw.write(habitList)
     }
 
+    /*
+    Gets the dimension of the screen and determines how much space each cell will take in the table
+     */
     private fun getDimension() {
         val wm =
             applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
@@ -227,7 +228,10 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         CELL_WIDTH = rightRelativeLayoutWidth / 5
     }
 
-    fun initializeRelativeLayout() {
+    /*
+    Creates the main relative layout and places the table relative layouts into the main relative layout
+     */
+    private fun initializeRelativeLayout() {
         val layoutParamsColumnHeaderLayout =
             RelativeLayout.LayoutParams(rightRelativeLayoutWidth, topRelativeLayoutHeight)
         val layoutParamsRowHeaderLayout =
@@ -284,7 +288,10 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         this.mainRelativeLayout.addView(tableRelativeLayout)
     }
 
-    fun initializeScroll() {
+    /*
+    Creates the scroll views for the table
+     */
+    private fun initializeScroll() {
         columnHeaderHorizontalScrollView = HorizontalScroll(applicationContext)
         columnHeaderHorizontalScrollView.setPadding(0, 0, 0, 0)
         columnHeaderHorizontalScrollView.isHorizontalScrollBarEnabled = false
@@ -337,7 +344,10 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         this.tableRelativeLayout.addView(tableScrollView)
     }
 
-    fun initializeTableLayout() {
+    /*
+    Sets the size and styles of each relative layout in the table
+     */
+    private fun initializeTableLayout() {
         val layoutParamsHeaderTableLayout =
             TableLayout.LayoutParams(leftRelativeLayoutWidth, topRelativeLayoutHeight)
         val layoutParamsColumnHeaderTableLayout =
@@ -421,12 +431,14 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         }
     }
 
-    fun createHeader() {
+    /*
+    Creates the header (where the row header and column header intersect)
+     */
+    private fun createHeader() {
         val layoutParamsTableRow =
             TableRow.LayoutParams(leftRelativeLayoutWidth, topRelativeLayoutHeight)
         val TABLE_NAME = TextView(applicationContext)
 
-        TABLE_NAME.setText(com.nathanlee.habittracker.R.string.header_table)
         TABLE_NAME.textSize =
             resources.getDimension(com.nathanlee.habittracker.R.dimen.cell_text_size)
 
@@ -436,7 +448,10 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         this.headerTableLayout.addView(tableRow)
     }
 
-    fun initializeColumnHeaderTable() {
+    /*
+    Creates the column headers for the table
+     */
+    private fun initializeColumnHeaderTable() {
         tableRowB = TableRow(applicationContext)
         tableRowB.setPadding(0, 0, 0, 0)
         this.columnHeaderTableLayout.addView(tableRowB)
@@ -451,6 +466,9 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         }
     }
 
+    /*
+    Add a cell to the column header
+     */
     @Synchronized
     private fun addColumnsToColumnHeader(text: String, id: Int) {
         val newTableRow = TableRow(applicationContext)
@@ -472,8 +490,11 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         tableRowB.addView(newTableRow)
     }
 
+    /*
+    Adds a cell to the row header
+     */
     @Synchronized
-    private fun addRowToRowHeader(habit: Habit) {
+    private fun addRowToRowHeader(habit: Habit, rowPos: Int) {
         val newTableRow = TableRow(applicationContext)
         val layoutParamsTableRow1 =
             TableRow.LayoutParams(leftRelativeLayoutWidth, topRelativeLayoutHeight)
@@ -494,7 +515,7 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
                 this
             )
         )
-        headerName.tag = habitList.size - 1
+        headerName.tag = rowPos
         headerName.setOnClickListener(editHabitListener)
 
         newTableRow.addView(headerName)
@@ -503,9 +524,12 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         outerTableRow.layoutParams = layoutParamsTableRow
         outerTableRow.addView(newTableRow)
 
-        this.rowHeaderTableLayout.addView(outerTableRow, habitList.size - 1)
+        this.rowHeaderTableLayout.addView(outerTableRow, rowPos)
     }
 
+    /*
+    Creates a row
+     */
     @Synchronized
     private fun initializeRowForTable(pos: Int) {
         val newTableRow = TableRow(applicationContext)
@@ -517,31 +541,37 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         this.tableTableLayout.addView(newTableRow, pos)
     }
 
+    /*
+    Adds a cell to the table
+     */
     @Synchronized
-    private fun addColumnToTable(currentRow: Int, currentColumn: Int, habit: Habit) {
+    private fun addCellToTable(currentRow: Int, currentColumn: Int, habit: Habit) {
         val currentTableRow = this.tableTableLayout.getChildAt(currentRow) as TableRow
         val layoutParamsTableRow =
             TableRow.LayoutParams(CELL_WIDTH, topRelativeLayoutHeight)
         val habitStatus = TextView(applicationContext)
         val completionsList = habit.completions
         val wantedCompletion =
-            completionsList.completions[completionsList.find(0, completionsList.completions.size, dateList[currentColumn])]
+            completionsList.completions[completionsList.find(
+                0,
+                completionsList.completions.size,
+                dateList[currentColumn]
+            )]
 
         tableRow = TableRow(applicationContext)
         tableRow.setPadding(3, 3, 3, 4)
         tableRow.layoutParams = layoutParamsTableRow
 
-        // TODO: Need to test this
         if (wantedCompletion.status == 2 || wantedCompletion.status == 3) {
-                tableRow.setBackgroundColor(
-                    ColourManager.selectColour(
-                        habit.colour,
-                        this
-                    )
+            tableRow.setBackgroundColor(
+                ColourManager.selectColour(
+                    habit.colour,
+                    this
                 )
-            } else {
-                tableRow.setBackgroundColor(Color.TRANSPARENT)
-            }
+            )
+        } else {
+            tableRow.setBackgroundColor(Color.TRANSPARENT)
+        }
 
         tableRow.tag = "$currentRow,$currentColumn"
         tableRow.setOnClickListener(editStatusListener)
@@ -549,16 +579,60 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         currentTableRow.addView(tableRow)
     }
 
-    private fun initializeHabits(){
+    /*
+    Reads the json file where habits are saved if it exists
+     */
+    private fun initializeHabits() {
         rw = ReadWriteJson(filesDir.toString())
-        habitList = rw.read()
 
-        for (i in 0 until habitList.size){
-            val thisCompletionList = habitList[i].completions
-            if (thisCompletionList.find(0, thisCompletionList.completions.size, TIMESTAMP) == -1){
-                val newCompletion = Completion(TIMESTAMP)
-                habitList[i].completions.edit(newCompletion, 1)
+        if (rw.exists()) {
+            habitList = rw.read()
+
+            for (i in 0 until habitList.size) {
+                val thisCompletionList = habitList[i].completions
+                if (thisCompletionList.find(
+                        0,
+                        thisCompletionList.completions.size - 1,
+                        TIMESTAMP
+                    ) == -1
+                ) {
+                    val newCompletion = Completion(TIMESTAMP)
+                    habitList[i].completions.edit(newCompletion, 1)
+                }
             }
+        } else {
+            rw.write(habitList)
+        }
+    }
+
+    /*
+    Creates a blank row
+     */
+    private fun createEmptyRow() {
+        val newTableRow = TableRow(applicationContext)
+        val layoutParamsNewTableRow =
+            TableRow.LayoutParams(leftRelativeLayoutWidth, topRelativeLayoutHeight)
+        TableRow.LayoutParams(leftRelativeLayoutWidth, topRelativeLayoutHeight)
+
+        newTableRow.setPadding(0, 0, 0, 0)
+        newTableRow.layoutParams = layoutParamsNewTableRow
+
+        this.rowHeaderTableLayout.addView(newTableRow, 0)
+
+        initializeRowForTable(0)
+
+        for (i in 0 until dateList.size) {
+            val currentTableRow = this.tableTableLayout.getChildAt(0) as TableRow
+            val layoutParamsTableRow =
+                TableRow.LayoutParams(CELL_WIDTH, 0)
+            val habitStatus = TextView(applicationContext)
+
+            tableRow = TableRow(applicationContext)
+            tableRow.setPadding(0, 0, 0, 0)
+            tableRow.layoutParams = layoutParamsTableRow
+
+            this.tableRow.addView(habitStatus)
+            currentTableRow.addView(tableRow)
         }
     }
 }

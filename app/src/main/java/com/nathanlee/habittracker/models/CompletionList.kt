@@ -1,5 +1,3 @@
-import java.util.*
-
 class CompletionList {
     var completions = mutableListOf<Completion>()
 
@@ -9,6 +7,11 @@ class CompletionList {
      */
     fun edit(newCompletion: Completion, timePeriod: Int) {
         var date = newCompletion.timestamp
+
+        if (completions.isEmpty()){
+            completions.add(newCompletion)
+            return
+        }
 
         when (timePeriod) {
             -1 -> {

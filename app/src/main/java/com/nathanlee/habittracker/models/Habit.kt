@@ -17,7 +17,7 @@ class Habit(
     var denominator: Int
 ) : Parcelable {
 
-    var frequency: Frequency = Frequency(numerator, denominator)
+    private var frequency: Frequency = Frequency(numerator, denominator)
     var completions: CompletionList = CompletionList()
     var streaks: StreakList = StreakList()
 
@@ -27,9 +27,7 @@ class Habit(
         parcel.readInt(),
         parcel.readInt(),
         parcel.readInt()
-    ) {
-
-    }
+    )
 
     /*
     Given a date, update the streak and completion status
@@ -97,6 +95,10 @@ class Habit(
         var startStreak = streaks.find(0, streaks.streaks.size - 1, date)
         var index: Int
         var startDate: Timestamp
+
+        if (streaks.streaks.isEmpty()){
+            return
+        }
 
         if (startStreak < 0) {
             startStreak *= -1
@@ -273,6 +275,7 @@ class Habit(
         lateinit var newStreak: Streak
 
         if (streaks.streaks.size == 0) {
+            streakIndex = 0
             newStreak = Streak(date, date)
             streaks.add(newStreak)
         }
@@ -345,7 +348,7 @@ class Habit(
                 }
             }
 
-            if (index > completions.completions.size) {
+            if (index >= completions.completions.size) {
                 index = completions.completions.size - 1
             }
         }

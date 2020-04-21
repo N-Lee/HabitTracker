@@ -83,7 +83,7 @@ data class Timestamp(var date: String) {
         val monthFormat = String.format("%02d", tomorrowMonth)
         val dayFormat = String.format("%02d", tomorrowDay)
 
-        return dayFormat + "/" + monthFormat + "/" + yearFormat
+        return "$dayFormat/$monthFormat/$yearFormat"
     }
 
     /*
@@ -174,7 +174,7 @@ data class Timestamp(var date: String) {
         val monthFormat = String.format("%02d", month)
         val dayFormat = String.format("%02d", day)
 
-        return Timestamp(dayFormat + "/" + monthFormat + "/" + yearFormat)
+        return Timestamp("$dayFormat/$monthFormat/$yearFormat")
     }
 
     /*
@@ -211,7 +211,7 @@ data class Timestamp(var date: String) {
         val monthFormat = String.format("%02d", month)
         val dayFormat = String.format("%02d", day)
 
-        return Timestamp(dayFormat + "/" + monthFormat + "/" + yearFormat)
+        return Timestamp("$dayFormat/$monthFormat/$yearFormat")
     }
 
     /*

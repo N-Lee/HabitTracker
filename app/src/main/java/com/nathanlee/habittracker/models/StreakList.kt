@@ -8,9 +8,7 @@ class StreakList {
     fun add(streak: Streak) {
         streaks.add(streak)
 
-        if (streaks.isEmpty()) {
-            longest = streak.length
-        } else if (streak.length > longest){
+        if (streak.length > longest){
             longest = streak.length
         }
     }
@@ -18,7 +16,7 @@ class StreakList {
     /*
     Merge two streaks when the start/end of two streaks match
      */
-    fun mergeStreaks(first: Streak, second: Streak) {
+    private fun mergeStreaks(first: Streak, second: Streak) {
         val firstIndex = this.find(0, streaks.size - 1, first.start)
         val secondIndex = this.find(0, streaks.size - 1, second.start)
 
