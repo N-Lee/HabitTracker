@@ -14,7 +14,9 @@ import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.nathanlee.habittracker.models.ColourManager
+import com.nathanlee.habittracker.components.ColourManager
+import com.nathanlee.habittracker.components.HabitManager.Companion.habitList
+import com.nathanlee.habittracker.components.HabitManager.Companion.rw
 import com.nathanlee.habittracker.models.Habit
 import java.text.SimpleDateFormat
 import java.util.*
@@ -41,9 +43,8 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
     private var mainActionBar: ActionBar? = null
 
     private var dateList = mutableListOf<Timestamp>()
-    private var habitList = mutableListOf<Habit>()
 
-    private lateinit var rw: ReadWriteJson
+    private var editLock = false
 
     private lateinit var habitDialog: Dialog
 
@@ -80,42 +81,46 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         habitDialog = Dialog(this)
 
         editHabitListener = View.OnClickListener { view ->
-            var startIntent = Intent(applicationContext, EditHabitActivity::class.java)
+            var startIntent = Intent(applicationContext, ShowHabitActivity::class.java)
             var rowIndex = view.tag as Int
-            startIntent.putExtra("edit_habit", habitList[rowIndex])
+            startIntent.putExtra("habit_index", rowIndex)
             startActivity(startIntent)
         }
 
         editStatusListener = View.OnClickListener { view ->
-            val tags: String = view.tag as String
-            val pos: Array<String> = tags.split(",").toTypedArray()
-            val wantedHabit = habitList[pos[0].toInt()]
-            val wantedDate = dateList[pos[1].toInt()]
-            val completionsList = wantedHabit.completions
-            val wantedCompletion =
-                completionsList.completions[completionsList.find(
-                    0,
-                    completionsList.completions.size,
-                    wantedDate
-                )]
+            if (!editLock) {
+                editLock = true
+                val tags: String = view.tag as String
+                val pos: Array<String> = tags.split(",").toTypedArray()
+                val wantedHabit = habitList[pos[0].toInt()]
+                val wantedDate = dateList[pos[1].toInt()]
+                val completionsList = wantedHabit.completions
+                val wantedCompletion =
+                    completionsList.completions[completionsList.find(
+                        0,
+                        completionsList.completions.size-1,
+                        wantedDate
+                    )]
 
-            if (wantedCompletion.status == 2 || wantedCompletion.status == 3) {
-                wantedHabit.editDate(wantedDate, 0)
-                view.setBackgroundColor(Color.TRANSPARENT)
-            } else {
-                wantedHabit.editDate(wantedDate, 2)
-                view.setBackgroundColor(
-                    ColourManager.selectColour(
-                        wantedHabit.colour,
-                        this
+                if (wantedCompletion.status == 2 || wantedCompletion.status == 3) {
+                    wantedHabit.editDate(wantedDate, 0)
+                    view.setBackgroundColor(Color.TRANSPARENT)
+                } else {
+                    wantedHabit.editDate(wantedDate, 2)
+                    view.setBackgroundColor(
+                        ColourManager.selectColour(
+                            wantedHabit.colour,
+                            this
+                        )
                     )
-                )
-            }
+                }
 
-            rw.write(habitList)
+                rw.write(habitList)
+                editLock = false
+            }
         }
 
-        mainRelativeLayout = findViewById(com.nathanlee.habittracker.R.id.mainRelativeLayout)
+        mainRelativeLayout = findViewById(com.nathanlee.habittracker.R.id.main_relative_layout)
         getDimension()
         initializeRelativeLayout()
         initializeScroll()
@@ -167,12 +172,12 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            com.nathanlee.habittracker.R.id.addHabitAppBar -> {
+            com.nathanlee.habittracker.R.id.add_habit_app_bar -> {
                 openHabitDialog()
             }
 
-            com.nathanlee.habittracker.R.id.settingsAppBar -> {
-                var startIntent = Intent(applicationContext, DisplayHabitsJson::class.java)
+            com.nathanlee.habittracker.R.id.settings_app_bar -> {
+                var startIntent = Intent(applicationContext, SettingsActivity::class.java)
                 startIntent.putExtra("com.nathanlee.habittracker.SOMETHING", "Text has changed")
                 startActivity(startIntent)
             }
@@ -515,8 +520,8 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
                 this
             )
         )
-        headerName.tag = rowPos
-        headerName.setOnClickListener(editHabitListener)
+        newTableRow.tag = rowPos
+        newTableRow.setOnClickListener(editHabitListener)
 
         newTableRow.addView(headerName)
 
@@ -554,7 +559,7 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         val wantedCompletion =
             completionsList.completions[completionsList.find(
                 0,
-                completionsList.completions.size,
+                completionsList.completions.size-1,
                 dateList[currentColumn]
             )]
 
@@ -601,6 +606,7 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
                 }
             }
         } else {
+            habitList = mutableListOf()
             rw.write(habitList)
         }
     }

@@ -12,7 +12,7 @@ import android.os.Parcelable
 class Habit(
     var name: String,
     var description: String,
-    var colour: Int,
+    var colour: String,
     var numerator: Int,
     var denominator: Int
 ) : Parcelable {
@@ -24,7 +24,7 @@ class Habit(
     constructor(parcel: Parcel) : this(
         parcel.readString() ?: "",
         parcel.readString() ?: "",
-        parcel.readInt(),
+        parcel.readString()?: "",
         parcel.readInt(),
         parcel.readInt()
     )
@@ -38,16 +38,20 @@ class Habit(
         val lastCompletion = completions.completions.last()
 
         // If before first date
-        if (firstCompletion.timestamp.compareTo(date) == 1) {
-            completions.edit(completion, -1)
 
-            // If After last date
-        } else if (lastCompletion.timestamp.compareTo(date) == -1) {
-            completions.edit(completion, 1)
+        when {
+            firstCompletion.timestamp.compareTo(date) == 1 -> {
+                completions.edit(completion, -1)
 
-        } else {
-            completions.edit(completion, 0)
+            }
+            lastCompletion.timestamp.compareTo(date) == -1 -> {
+                completions.edit(completion, 1)
 
+            }
+            else -> {
+                completions.edit(completion, 0)
+
+            }
         }
 
         updatePeriodCompletions(date)
@@ -96,7 +100,7 @@ class Habit(
         var index: Int
         var startDate: Timestamp
 
-        if (streaks.streaks.isEmpty()){
+        if (streaks.streaks.isEmpty()) {
             return
         }
 
@@ -156,7 +160,7 @@ class Habit(
         var endIndex = _endIndex
         var count = 0
 
-        if (endIndex > completions.completions.size) {
+        if (endIndex >= completions.completions.size) {
             endIndex = completions.completions.size - 1
         }
 
@@ -176,7 +180,6 @@ class Habit(
                     count++
 
                     if (count <= frequency.numerator) {
-                        var test = completions.completions[i].timestamp
                         completions.completions[i].status = 2
                     }
                 }
@@ -241,7 +244,7 @@ class Habit(
     /*
     Finds the last date within a period that was completed
      */
-    fun lastCompleteInPeriod(startIndex: Int): Int {
+    private fun lastCompleteInPeriod(startIndex: Int): Int {
         var endIndex = startIndex + frequency.denominator - 1
         var lastIndex = -1
 
@@ -354,10 +357,33 @@ class Habit(
         }
     }
 
+    fun getCompletionsInMonth(date: Timestamp): MutableList<Completion> {
+        val index = completions.find(0, completions.completions.size, date)
+        val today: Timestamp = completions.completions[index].timestamp
+        val monthLength = today.monthLength(today)
+        val dayInt = today.dayInt
+        val daysSinceFirstDayInMonth = dayInt - 1
+        val daysUntilLastDayInMonth = monthLength - dayInt
+        val firstDayIndex = index - daysSinceFirstDayInMonth
+        val lastDayIndex = index + daysUntilLastDayInMonth
+        var completionsInMonth = mutableListOf<Completion>()
+
+        for (i in firstDayIndex..lastDayIndex) {
+            if (i < completions.completions.size) {
+                completionsInMonth.add(completions.completions[i])
+            } else {
+                return completionsInMonth
+            }
+        }
+
+        return completionsInMonth
+
+    }
+
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(name)
         parcel.writeString(description)
-        parcel.writeInt(colour)
+        parcel.writeString(colour)
         parcel.writeInt(numerator)
         parcel.writeInt(denominator)
     }

@@ -1,4 +1,3 @@
-
 import java.text.SimpleDateFormat
 
 data class Timestamp(var date: String) {
@@ -130,8 +129,22 @@ data class Timestamp(var date: String) {
     fun getDayOfWeek(day: Timestamp): String {
         val calendarNumber = SimpleDateFormat("dd/MM/yyyy")
         val date = calendarNumber.parse(day.date)
-        val weekday = SimpleDateFormat("EE")
+        val weekday = SimpleDateFormat("EEE")
         return weekday.format(date)
+    }
+
+    fun getDayOfWeekIndex(day: Timestamp): Int {
+        val dayString = getDayOfWeek(day)
+        var dayInt = 0 // 0 = Sunday ... 6 = Saturday
+        when (dayString) {
+            "Mon" -> dayInt = 1
+            "Tue" -> dayInt = 2
+            "Wed" -> dayInt = 3
+            "Thu" -> dayInt = 4
+            "Fri" -> dayInt = 5
+            "Sat" -> dayInt = 6
+        }
+        return dayInt
     }
 
     /*
@@ -214,6 +227,45 @@ data class Timestamp(var date: String) {
         return Timestamp("$dayFormat/$monthFormat/$yearFormat")
     }
 
+    fun getNextMonth(date: Timestamp): Timestamp {
+        var year = yearInt
+        var month = monthInt + 1
+        var day = dayInt
+
+        if (month > 12) {
+            month = 1
+            ++year
+        }
+
+        val yearFormat = String.format("%04d", year)
+        val monthFormat = String.format("%02d", month)
+        val dayFormat = String.format("%02d", day)
+
+        return Timestamp("$dayFormat/$monthFormat/$yearFormat")
+    }
+
+    fun getPreviousMonth(date: Timestamp): Timestamp {
+        var year = yearInt
+        var month = monthInt - 1
+        var day = dayInt
+
+        if (month < 1) {
+            month = 12
+            --year
+        }
+
+        val yearFormat = String.format("%04d", year)
+        val monthFormat = String.format("%02d", month)
+        val dayFormat = String.format("%02d", day)
+
+        return Timestamp("$dayFormat/$monthFormat/$yearFormat")
+    }
+
+    fun monthLength(date: Timestamp): Int {
+        var daysInMonth: IntArray = date.isLeapYear()
+        return daysInMonth[monthInt - 1]
+    }
+
     /*
     Given two dates, determines if this timestamp falls between the two given dates (inclusive)
      */
@@ -222,6 +274,25 @@ data class Timestamp(var date: String) {
             return true
         }
         return false
+    }
+
+    fun monthString(date: Timestamp): String {
+        when (date.monthInt) {
+            1 -> return "Jan"
+            2 -> return "Feb"
+            3 -> return "Mar"
+            4 -> return "Apr"
+            5 -> return "May"
+            6 -> return "Jun"
+            7 -> return "Jul"
+            8 -> return "Aug"
+            9 -> return "Sep"
+            10 -> return "Oct"
+            11 -> return "Nov"
+        }
+
+        return "Dec"
+
     }
 
     /*

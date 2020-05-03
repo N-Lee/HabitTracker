@@ -18,5 +18,12 @@
     <color name="darkThemeBlue">#64B5F6</color>
     <color name="darkThemeYellow">#C9BF67</color>
 
+    <color name="darkThemeLightGrey">#66999999</color>
+    <color name="darkThemeLightGreen">#6681C784</color>
+    <color name="darkThemeLightOrange">#66E57373</color>
+    <color name="darkThemeLightPink">#66F06292</color>
+    <color name="darkThemeLightPurple">#66A887EE</color>
+    <color name="darkThemeLightBlue">#6664B5F6</color>
+    <color name="darkThemeLightYellow">#66C9BF67</color>
 
 </resources>

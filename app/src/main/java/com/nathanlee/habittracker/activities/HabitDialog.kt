@@ -11,7 +11,8 @@ import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDialogFragment
-import com.nathanlee.habittracker.models.ColourManager.selectColour
+import com.nathanlee.habittracker.components.ColourManager.colourIdToString
+import com.nathanlee.habittracker.components.ColourManager.selectColour
 import com.nathanlee.habittracker.models.Habit
 
 class HabitDialog : AppCompatDialogFragment() {
@@ -46,38 +47,40 @@ class HabitDialog : AppCompatDialogFragment() {
 
         builder.setView(view)
 
-        habitNameTextView = view.findViewById(com.nathanlee.habittracker.R.id.habitNameText)
+        habitNameTextView = view.findViewById(com.nathanlee.habittracker.R.id.habit_name_text)
 
-        colourRadioGroup = view.findViewById(com.nathanlee.habittracker.R.id.colourGroup)
+        colourRadioGroup = view.findViewById(com.nathanlee.habittracker.R.id.colour_group)
         colourRadioGroup.setOnCheckedChangeListener { _, colourId ->
-            habitNameTextView.setTextColor(selectColour(colourId, requireContext()))
+            val colour = colourIdToString(colourId, requireContext())
+            habitNameTextView.setTextColor(selectColour(colour, requireContext()))
         }
 
-        titleTextView = view.findViewById(com.nathanlee.habittracker.R.id.popupTitleText)
+        titleTextView = view.findViewById(com.nathanlee.habittracker.R.id.popup_title_text)
         titleTextView.setText(com.nathanlee.habittracker.R.string.habit_popup_title_new)
 
-        habitNameEditText = view.findViewById(com.nathanlee.habittracker.R.id.habitNameText)
+        habitNameEditText = view.findViewById(com.nathanlee.habittracker.R.id.habit_name_text)
+        val colour = colourIdToString(colourRadioGroup.checkedRadioButtonId, requireContext())
         habitNameEditText.setTextColor(
             selectColour(
-                colourRadioGroup.checkedRadioButtonId,
+                colour,
                 requireContext()
             )
         )
 
         habitDescriptionEditTextView =
-            view.findViewById(com.nathanlee.habittracker.R.id.habitDescriptionText)
+            view.findViewById(com.nathanlee.habittracker.R.id.habit_description_text)
 
         habitNumeratorEditTextView =
-            view.findViewById(com.nathanlee.habittracker.R.id.habitNumeratorEditText)
+            view.findViewById(com.nathanlee.habittracker.R.id.habit_numerator_edit_text)
         habitDenominatorEditText =
-            view.findViewById(com.nathanlee.habittracker.R.id.habitDenominatorEditText)
+            view.findViewById(com.nathanlee.habittracker.R.id.habit_denominator_edit_text)
 
-        cancelTextView = view.findViewById(com.nathanlee.habittracker.R.id.cancelText)
+        cancelTextView = view.findViewById(com.nathanlee.habittracker.R.id.cancel_text)
         cancelTextView.setOnClickListener {
             closeNewHabitPopup(cancelTextView)
         }
 
-        saveTextView = view.findViewById(com.nathanlee.habittracker.R.id.saveText)
+        saveTextView = view.findViewById(com.nathanlee.habittracker.R.id.save_text)
         saveTextView.setOnClickListener {
             closeNewHabitPopup(saveTextView)
         }
@@ -88,8 +91,8 @@ class HabitDialog : AppCompatDialogFragment() {
     }
 
     fun closeNewHabitPopup(v: View) {
-        if (v.id == com.nathanlee.habittracker.R.id.saveText) {
-            var colour = colourRadioGroup.checkedRadioButtonId
+        if (v.id == com.nathanlee.habittracker.R.id.save_text) {
+            var colour = colourIdToString(colourRadioGroup.checkedRadioButtonId, requireContext())
             var name = habitNameEditText.text.toString()
             var description = habitDescriptionEditTextView.text.toString()
             var numerator = habitNumeratorEditTextView.text.toString().toInt()

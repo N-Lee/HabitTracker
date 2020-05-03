@@ -3,13 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:title="AddHabit"
-        android:id="@+id/addHabitAppBar"
+        android:id="@+id/add_habit_app_bar"
         app:showAsAction="always"
         android:orderInCategory="100"
         android:icon="@drawable/add_habit_image"/>
 
     <item android:title="Settings"
-        android:id="@+id/settingsAppBar"
+        android:id="@+id/settings_app_bar"
         android:orderInCategory="101"
         app:showAsAction="always"
         android:icon="@drawable/settings_button_image"/>
