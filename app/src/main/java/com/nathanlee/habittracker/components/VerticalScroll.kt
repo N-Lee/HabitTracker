@@ -1,4 +1,4 @@
-package com.nathanlee.habittracker.activities
+package com.nathanlee.habittracker.components
 
 import android.content.Context
 import android.util.AttributeSet

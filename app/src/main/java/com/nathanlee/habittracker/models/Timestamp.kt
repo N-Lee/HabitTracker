@@ -299,6 +299,6 @@ data class Timestamp(var date: String) {
     Returns the date as a string
      */
     override fun toString(): String {
-        return date
+        return "${monthString(this)} $dayInt, $yearInt"
     }
 }

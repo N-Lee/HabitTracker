@@ -4,13 +4,75 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/darkThemeBackground"
+    android:background="@color/dark_theme_background"
     android:orientation="vertical">
 
-    <com.nathanlee.habittracker.components.CalendarView
-        android:id="@+id/calendar"
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="wrap_content"
+        android:isScrollContainer="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/calendar_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:background="@color/dark_theme_table_background">
+
+                <TextView
+                    android:id="@+id/history_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="10dp"
+                    android:text="@string/show_habit_calendar" />
+
+                <com.nathanlee.habittracker.components.CalendarView
+                    android:id="@+id/calendar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/history_text"
+                    android:nestedScrollingEnabled="false" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/streak_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="10dp"
+                android:background="@color/dark_theme_table_background">
+
+                <TextView
+                    android:id="@+id/streak_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="10dp"
+                    android:text="@string/show_habit_streak" />
+
+                <LinearLayout
+                    android:id="@+id/chart_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="1000dp"
+                    android:layout_below="@id/streak_text">
+
+                    <com.github.mikephil.charting.charts.HorizontalBarChart
+                        android:id="@+id/streak_chart"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="15dp" />
+                </LinearLayout>
+            </RelativeLayout>
+
+
+        </LinearLayout>
+    </ScrollView>
 
 
 </RelativeLayout>

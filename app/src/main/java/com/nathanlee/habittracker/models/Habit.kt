@@ -8,13 +8,14 @@ import StreakList
 import Timestamp
 import android.os.Parcel
 import android.os.Parcelable
+import android.util.Log
 
 class Habit(
     var name: String,
     var description: String,
     var colour: String,
-    var numerator: Int,
-    var denominator: Int
+    private var numerator: Int,
+    private var denominator: Int
 ) : Parcelable {
 
     private var frequency: Frequency = Frequency(numerator, denominator)
@@ -24,7 +25,7 @@ class Habit(
     constructor(parcel: Parcel) : this(
         parcel.readString() ?: "",
         parcel.readString() ?: "",
-        parcel.readString()?: "",
+        parcel.readString() ?: "",
         parcel.readInt(),
         parcel.readInt()
     )
@@ -36,8 +37,6 @@ class Habit(
         val completion = Completion(date, completionStatus)
         val firstCompletion = completions.completions.first()
         val lastCompletion = completions.completions.last()
-
-        // If before first date
 
         when {
             firstCompletion.timestamp.compareTo(date) == 1 -> {
@@ -104,11 +103,15 @@ class Habit(
             return
         }
 
-        if (startStreak < 0) {
-            startStreak *= -1
-            startDate = streaks.streaks[startStreak].start
+        if (startStreak == 0 && streaks.streaks[startStreak].start.compareTo(date) == 1) {
+            startDate = date
         } else {
-            startDate = streaks.streaks[startStreak].start
+            if (startStreak < 0) {
+                startStreak *= -1
+                startDate = streaks.streaks[startStreak].start
+            } else {
+                startDate = streaks.streaks[startStreak].start
+            }
         }
 
         index = completions.find(0, completions.completions.size, startDate)
@@ -156,7 +159,7 @@ class Habit(
     Marks completes as extra complete if frequency is met
     Marks extra completes as complete if frequency is not met
      */
-    fun markCompletions(startIndex: Int, _endIndex: Int) {
+    private fun markCompletions(startIndex: Int, _endIndex: Int) {
         var endIndex = _endIndex
         var count = 0
 
@@ -190,7 +193,7 @@ class Habit(
     /*
     Given a period, check if frequency is met
      */
-    fun isFrequencyMet(startIndex: Int): Boolean {
+    private fun isFrequencyMet(startIndex: Int): Boolean {
         var counter = 0
 
         if (startIndex < 0) {
@@ -220,7 +223,7 @@ class Habit(
     /*
     Finds the first date within a period that was completed
      */
-    fun firstCompleteInPeriod(startIndex: Int): Int {
+    private fun firstCompleteInPeriod(startIndex: Int): Int {
         var endIndex = startIndex + frequency.denominator - 1
 
         if (startIndex == -1) {
@@ -357,27 +360,45 @@ class Habit(
         }
     }
 
-    fun getCompletionsInMonth(date: Timestamp): MutableList<Completion> {
-        val index = completions.find(0, completions.completions.size, date)
-        val today: Timestamp = completions.completions[index].timestamp
-        val monthLength = today.monthLength(today)
-        val dayInt = today.dayInt
-        val daysSinceFirstDayInMonth = dayInt - 1
-        val daysUntilLastDayInMonth = monthLength - dayInt
-        val firstDayIndex = index - daysSinceFirstDayInMonth
-        val lastDayIndex = index + daysUntilLastDayInMonth
-        var completionsInMonth = mutableListOf<Completion>()
+    /*
+    Replaces class variables
+     */
+    fun replace(
+        name: String,
+        description: String,
+        colour: String,
+        numerator: Int,
+        denominator: Int
+    ) {
+        this.name = name
+        this.description = description
+        this.colour = colour
+        this.numerator = numerator
+        this.denominator = denominator
+        frequency.numerator = numerator
+        frequency.denominator = denominator
+    }
 
-        for (i in firstDayIndex..lastDayIndex) {
-            if (i < completions.completions.size) {
-                completionsInMonth.add(completions.completions[i])
-            } else {
-                return completionsInMonth
-            }
-        }
+    /*
+    Setter for frequency
+     */
+    fun setFrequency(denominator: Int, numerator: Int) {
+        frequency.denominator = denominator
+        frequency.numerator = numerator
+    }
 
-        return completionsInMonth
+    /*
+    Getter for frequency numerator
+     */
+    fun getNumerator(): Int {
+        return frequency.numerator
+    }
 
+    /*
+    Getter for frequency denominator
+     */
+    fun getDenominator(): Int {
+        return frequency.denominator
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {

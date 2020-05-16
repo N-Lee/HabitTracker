@@ -7,13 +7,9 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="MyCheckbox" parent="@style/Widget.AppCompat.CompoundButton.CheckBox">
-        <item name="android:buttonTint">#64B5F6</item>
-    </style>
-
-    <style name="HabitDialog" parent="@android:style/Theme.Dialog">
-        <item name="android:background">@color/darkThemeBackground</item>
-        <item name="android:textColor">@color/darkThemeTitle</item>
+    <style name="habit_dialog" parent="@android:style/Theme.Dialog">
+        <item name="android:background">@color/dark_theme_background</item>
+        <item name="android:textColor">@color/dark_theme_title</item>
     </style>
 
 </resources>

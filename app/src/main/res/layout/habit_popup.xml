@@ -5,7 +5,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_gravity="center"
-    android:background="@color/darkThemeBackground"
+    android:background="@color/dark_theme_background"
     android:orientation="horizontal"
     android:padding="5dp">
 
@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="15dp"
-                android:textColor="@color/darkThemeTitle"
+                android:textColor="@color/dark_theme_title"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
@@ -43,12 +43,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:autofillHints="@string/habit_popup_name"
-                android:backgroundTint="@color/darkThemeTitle"
+                android:backgroundTint="@color/dark_theme_title"
                 android:ems="10"
                 android:hint="@string/habit_popup_name"
                 android:inputType="textPersonName"
-                android:textColor="@color/darkThemeGrey"
-                android:textColorHint="@color/darkThemeHint"
+                android:textColor="@color/dark_theme_grey"
+                android:textColorHint="@color/dark_theme_hint"
                 app:layout_constraintHorizontal_weight="1.00"
                 tools:targetApi="o" />
 
@@ -57,19 +57,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:autofillHints="@string/habit_popup_description"
-                android:backgroundTint="@color/darkThemeTitle"
+                android:backgroundTint="@color/dark_theme_title"
                 android:ems="10"
                 android:hint="@string/habit_popup_description"
                 android:inputType="textPersonName"
-                android:textColor="@color/darkThemeTitle"
-                android:textColorHint="@color/darkThemeHint"
+                android:textColor="@color/dark_theme_title"
+                android:textColorHint="@color/dark_theme_hint"
                 tools:targetApi="o" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/habit_popup_select_colour"
-                android:textColor="@color/darkThemeTitle"
+                android:textColor="@color/dark_theme_title"
                 android:textSize="18sp" />
 
             <RadioGroup
@@ -83,43 +83,43 @@
                     android:id="@+id/grey_radio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:buttonTint="@color/darkThemeGrey" />
+                    android:buttonTint="@color/dark_theme_grey" />
 
                 <RadioButton
                     android:id="@+id/blue_radio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:buttonTint="@color/darkThemeBlue" />
+                    android:buttonTint="@color/dark_theme_blue" />
 
                 <RadioButton
                     android:id="@+id/green_radio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:buttonTint="@color/darkThemeGreen" />
+                    android:buttonTint="@color/dark_theme_green" />
 
                 <RadioButton
                     android:id="@+id/orange_radio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:buttonTint="@color/darkThemeOrange" />
+                    android:buttonTint="@color/dark_theme_orange" />
 
                 <RadioButton
                     android:id="@+id/pink_radio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:buttonTint="@color/darkThemePink" />
+                    android:buttonTint="@color/dark_theme_pink" />
 
                 <RadioButton
                     android:id="@+id/yellow_radio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:buttonTint="@color/darkThemeYellow" />
+                    android:buttonTint="@color/dark_theme_yellow" />
 
                 <RadioButton
                     android:id="@+id/purple_radio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:buttonTint="@color/darkThemePurple" />
+                    android:buttonTint="@color/dark_theme_purple" />
 
             </RadioGroup>
 
@@ -132,41 +132,41 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/habit_popup_repeat"
-                    android:textColor="@color/darkThemeTitle"
+                    android:textColor="@color/dark_theme_title"
                     android:textSize="18sp" />
 
                 <EditText
                     android:id="@+id/habit_numerator_edit_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/darkThemeTitle"
+                    android:backgroundTint="@color/dark_theme_title"
                     android:inputType="numberSigned"
                     android:text="7"
-                    android:textColor="@color/darkThemeTitle" />
+                    android:textColor="@color/dark_theme_title" />
 
                 <TextView
                     android:id="@+id/times_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/habit_popup_times"
-                    android:textColor="@color/darkThemeTitle"
+                    android:textColor="@color/dark_theme_title"
                     android:textSize="18sp" />
 
                 <EditText
                     android:id="@+id/habit_denominator_edit_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/darkThemeTitle"
+                    android:backgroundTint="@color/dark_theme_title"
                     android:inputType="numberSigned"
                     android:text="7"
-                    android:textColor="@color/darkThemeTitle" />
+                    android:textColor="@color/dark_theme_title" />
 
                 <TextView
                     android:id="@+id/days_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/habit_popup_days"
-                    android:textColor="@color/darkThemeTitle"
+                    android:textColor="@color/dark_theme_title"
                     android:textSize="18sp" />
             </LinearLayout>
 
@@ -185,7 +185,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:text="@string/habit_popup_cancel"
-                    android:textColor="@color/darkThemeTitle"
+                    android:textColor="@color/dark_theme_title"
                     android:textSize="18sp" />
 
                 <TextView
@@ -198,7 +198,7 @@
                     android:paddingStart="20dp"
                     android:paddingEnd="0dp"
                     android:text="@string/habit_popup_save"
-                    android:textColor="@color/darkThemeTitle"
+                    android:textColor="@color/dark_theme_title"
                     android:textSize="18sp" />
             </RelativeLayout>
 

@@ -4,26 +4,26 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
 
-    <color name="darkThemeBackground">#525151</color>
-    <color name="darkThemeTitle">#FFFFFF</color>
-    <color name="darkThemeHint">#727272</color>
+    <color name="dark_theme_background">#303030</color>
+    <color name="dark_theme_title">#FFFFFF</color>
+    <color name="dark_theme_hint">#727272</color>
 
-    <color name="darkThemeTableBackground">#303030</color>
+    <color name="dark_theme_table_background">#525151</color>
 
-    <color name="darkThemeGrey">#999999</color>
-    <color name="darkThemeGreen">#81C784</color>
-    <color name="darkThemeOrange">#E57373</color>
-    <color name="darkThemePink">#F06292</color>
-    <color name="darkThemePurple">#A887EE</color>
-    <color name="darkThemeBlue">#64B5F6</color>
-    <color name="darkThemeYellow">#C9BF67</color>
+    <color name="dark_theme_grey">#999999</color>
+    <color name="dark_theme_green">#81C784</color>
+    <color name="dark_theme_orange">#E57373</color>
+    <color name="dark_theme_pink">#F06292</color>
+    <color name="dark_theme_purple">#A887EE</color>
+    <color name="dark_theme_blue">#64B5F6</color>
+    <color name="dark_theme_yellow">#C9BF67</color>
 
-    <color name="darkThemeLightGrey">#66999999</color>
-    <color name="darkThemeLightGreen">#6681C784</color>
-    <color name="darkThemeLightOrange">#66E57373</color>
-    <color name="darkThemeLightPink">#66F06292</color>
-    <color name="darkThemeLightPurple">#66A887EE</color>
-    <color name="darkThemeLightBlue">#6664B5F6</color>
-    <color name="darkThemeLightYellow">#66C9BF67</color>
+    <color name="dark_theme_light_grey">#66999999</color>
+    <color name="dark_theme_light_green">#6681C784</color>
+    <color name="dark_theme_light_orange">#66E57373</color>
+    <color name="dark_theme_light_pink">#66F06292</color>
+    <color name="dark_theme_light_purple">#66A887EE</color>
+    <color name="dark_theme_light_blue">#6664B5F6</color>
+    <color name="dark_theme_light_yellow">#66C9BF67</color>
 
 </resources>

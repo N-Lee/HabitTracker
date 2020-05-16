@@ -3,11 +3,9 @@ package com.nathanlee.habittracker.activities
 import Completion
 import ReadWriteJson
 import Timestamp
-import android.app.ActionBar
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.graphics.Point
 import android.os.Bundle
 import android.view.*
@@ -17,6 +15,8 @@ import androidx.core.content.ContextCompat
 import com.nathanlee.habittracker.components.ColourManager
 import com.nathanlee.habittracker.components.HabitManager.Companion.habitList
 import com.nathanlee.habittracker.components.HabitManager.Companion.rw
+import com.nathanlee.habittracker.components.HorizontalScroll
+import com.nathanlee.habittracker.components.VerticalScroll
 import com.nathanlee.habittracker.models.Habit
 import java.text.SimpleDateFormat
 import java.util.*
@@ -30,6 +30,8 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
 
     private val NUMBER_OF_DATES = 12
 
+    private val ROW_MARGIN = 15
+
     private var CELL_WIDTH = 200
 
     private var screenHeight = 0
@@ -39,8 +41,6 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
     private var rightRelativeLayoutWidth = 0
     private var topRelativeLayoutHeight = 0
     private var bottomRelativeLayoutHeight = 0
-
-    private var mainActionBar: ActionBar? = null
 
     private var dateList = mutableListOf<Timestamp>()
 
@@ -98,13 +98,18 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
                 val wantedCompletion =
                     completionsList.completions[completionsList.find(
                         0,
-                        completionsList.completions.size-1,
+                        completionsList.completions.size - 1,
                         wantedDate
                     )]
 
                 if (wantedCompletion.status == 2 || wantedCompletion.status == 3) {
                     wantedHabit.editDate(wantedDate, 0)
-                    view.setBackgroundColor(Color.TRANSPARENT)
+                    view.setBackgroundColor(
+                        ContextCompat.getColor(
+                            applicationContext,
+                            com.nathanlee.habittracker.R.color.dark_theme_table_background
+                        )
+                    )
                 } else {
                     wantedHabit.editDate(wantedDate, 2)
                     view.setBackgroundColor(
@@ -187,14 +192,6 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
     }
 
     /*
-    Opens the dialog to create a new habit
-     */
-    private fun openHabitDialog() {
-        var newDialog = HabitDialog()
-        newDialog.show(supportFragmentManager, "Show com.nathanlee.habittracker.models.Habit")
-    }
-
-    /*
     Retrieves habit info after creating a new habit through the dialog box
      */
     override fun sendHabit(habit: Habit) {
@@ -214,6 +211,37 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         rw.write(habitList)
     }
 
+    override fun onScrollChanged(
+        scrollView: HorizontalScroll,
+        x: Int,
+        y: Int,
+        oldX: Int,
+        oldY: Int
+    ) {
+        if (scrollView == columnHeaderHorizontalScrollView) {
+            tableHorizontalScrollView.scrollTo(x, y)
+        } else if (scrollView == tableHorizontalScrollView) {
+            columnHeaderHorizontalScrollView.scrollTo(x, y)
+        }
+    }
+
+    override fun onScrollChanged(scrollView: VerticalScroll, x: Int, y: Int, oldX: Int, oldY: Int) {
+        if (scrollView == rowHeaderScrollView) {
+            tableScrollView.scrollTo(x, y)
+        } else if (scrollView == tableScrollView) {
+            rowHeaderScrollView.scrollTo(x, y)
+        }
+    }
+
+    /*
+    Opens the dialog to create a new habit
+     */
+    private fun openHabitDialog() {
+        var newDialog = HabitDialog(true)
+        newDialog.show(supportFragmentManager, "Show com.nathanlee.habittracker.models.Habit")
+    }
+
+
     /*
     Gets the dimension of the screen and determines how much space each cell will take in the table
      */
@@ -226,11 +254,11 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
 
         screenWidth = size.x
         screenHeight = size.y
-        leftRelativeLayoutWidth = screenWidth / 5
+        leftRelativeLayoutWidth = screenWidth / 3
         rightRelativeLayoutWidth = screenWidth - leftRelativeLayoutWidth
-        topRelativeLayoutHeight = screenHeight / 20
+        topRelativeLayoutHeight = screenHeight / 13
         bottomRelativeLayoutHeight = screenHeight - topRelativeLayoutHeight
-        CELL_WIDTH = rightRelativeLayoutWidth / 5
+        CELL_WIDTH = rightRelativeLayoutWidth / 4
     }
 
     /*
@@ -297,17 +325,20 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
     Creates the scroll views for the table
      */
     private fun initializeScroll() {
-        columnHeaderHorizontalScrollView = HorizontalScroll(applicationContext)
+        columnHeaderHorizontalScrollView =
+            HorizontalScroll(applicationContext)
         columnHeaderHorizontalScrollView.setPadding(0, 0, 0, 0)
         columnHeaderHorizontalScrollView.isHorizontalScrollBarEnabled = false
         columnHeaderHorizontalScrollView.overScrollMode = View.OVER_SCROLL_NEVER
 
-        tableHorizontalScrollView = HorizontalScroll(applicationContext)
+        tableHorizontalScrollView =
+            HorizontalScroll(applicationContext)
         tableHorizontalScrollView.setPadding(0, 0, 0, 0)
         tableHorizontalScrollView.isHorizontalScrollBarEnabled = false
         tableHorizontalScrollView.overScrollMode = View.OVER_SCROLL_NEVER
 
-        rowHeaderScrollView = VerticalScroll(applicationContext)
+        rowHeaderScrollView =
+            VerticalScroll(applicationContext)
         rowHeaderScrollView.setPadding(0, 0, 0, 0)
         rowHeaderScrollView.isVerticalScrollBarEnabled = false
         rowHeaderScrollView.overScrollMode = View.OVER_SCROLL_NEVER
@@ -381,7 +412,7 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         headerTableLayout.setBackgroundColor(
             ContextCompat.getColor(
                 applicationContext,
-                com.nathanlee.habittracker.R.color.darkThemeTableBackground
+                com.nathanlee.habittracker.R.color.dark_theme_background
             )
         )
         this.headerRelativeLayout.addView(headerTableLayout)
@@ -390,50 +421,14 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         columnHeaderTableLayout.setBackgroundColor(
             ContextCompat.getColor(
                 applicationContext,
-                com.nathanlee.habittracker.R.color.darkThemeTableBackground
+                com.nathanlee.habittracker.R.color.dark_theme_background
             )
         )
         this.columnHeaderHorizontalScrollView.addView(columnHeaderTableLayout)
-
         rowHeaderTableLayout.layoutParams = layoutParamsRowHeaderTableLayout
-        rowHeaderTableLayout.setBackgroundColor(
-            ContextCompat.getColor(
-                applicationContext,
-                com.nathanlee.habittracker.R.color.darkThemeBackground
-            )
-        )
         this.rowHeaderScrollView.addView(rowHeaderTableLayout)
-
         tableTableLayout.layoutParams = layoutParamsTableTableLayout
-        tableTableLayout.setBackgroundColor(
-            ContextCompat.getColor(
-                applicationContext,
-                com.nathanlee.habittracker.R.color.darkThemeBackground
-            )
-        )
         this.tableHorizontalScrollView.addView(tableTableLayout)
-    }
-
-    override fun onScrollChanged(
-        scrollView: HorizontalScroll,
-        x: Int,
-        y: Int,
-        oldX: Int,
-        oldY: Int
-    ) {
-        if (scrollView == columnHeaderHorizontalScrollView) {
-            tableHorizontalScrollView.scrollTo(x, y)
-        } else if (scrollView == tableHorizontalScrollView) {
-            columnHeaderHorizontalScrollView.scrollTo(x, y)
-        }
-    }
-
-    override fun onScrollChanged(scrollView: VerticalScroll, x: Int, y: Int, oldX: Int, oldY: Int) {
-        if (scrollView == rowHeaderScrollView) {
-            tableScrollView.scrollTo(x, y)
-        } else if (scrollView == tableScrollView) {
-            rowHeaderScrollView.scrollTo(x, y)
-        }
     }
 
     /*
@@ -442,14 +437,14 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
     private fun createHeader() {
         val layoutParamsTableRow =
             TableRow.LayoutParams(leftRelativeLayoutWidth, topRelativeLayoutHeight)
-        val TABLE_NAME = TextView(applicationContext)
+        val tableName = TextView(applicationContext)
 
-        TABLE_NAME.textSize =
+        tableName.textSize =
             resources.getDimension(com.nathanlee.habittracker.R.dimen.cell_text_size)
 
         tableRow = TableRow(applicationContext)
         tableRow.layoutParams = layoutParamsTableRow
-        tableRow.addView(TABLE_NAME)
+        tableRow.addView(tableName)
         this.headerTableLayout.addView(tableRow)
     }
 
@@ -462,12 +457,12 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         this.columnHeaderTableLayout.addView(tableRowB)
 
         for (i in 0..NUMBER_OF_DATES) {
-            val WANTED_DATE = TIMESTAMP.getDaysBefore(NUMBER_OF_DATES - i)
-            val WEEKDAY = WANTED_DATE.getDayOfWeek(WANTED_DATE)
-            val TODAY = WANTED_DATE.dayInt
+            val wantedDate = TIMESTAMP.getDaysBefore(NUMBER_OF_DATES - i)
+            val weekday = wantedDate.getDayOfWeek(wantedDate)
+            val today = wantedDate.dayInt
 
-            addColumnsToColumnHeader("$WEEKDAY\n$TODAY", i)
-            dateList.add(WANTED_DATE)
+            addColumnsToColumnHeader("$weekday\n$today", i)
+            dateList.add(wantedDate)
         }
     }
 
@@ -476,7 +471,9 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
      */
     @Synchronized
     private fun addColumnsToColumnHeader(text: String, id: Int) {
-        val newTableRow = TableRow(applicationContext)
+        val newTableRow = TableRow(applicationContext).apply {
+            gravity = Gravity.CENTER_VERTICAL
+        }
         val layoutParamsTableRow =
             TableRow.LayoutParams(CELL_WIDTH, topRelativeLayoutHeight)
         val HEADER_TEXT_VIEW = TextView(applicationContext)
@@ -500,7 +497,9 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
      */
     @Synchronized
     private fun addRowToRowHeader(habit: Habit, rowPos: Int) {
-        val newTableRow = TableRow(applicationContext)
+        val newTableRow = TableRow(applicationContext).apply {
+            gravity = Gravity.CENTER_VERTICAL
+        }
         val layoutParamsTableRow1 =
             TableRow.LayoutParams(leftRelativeLayoutWidth, topRelativeLayoutHeight)
         val headerName = TextView(applicationContext)
@@ -508,6 +507,12 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         val layoutParamsTableRow =
             TableRow.LayoutParams(leftRelativeLayoutWidth, topRelativeLayoutHeight)
 
+        layoutParamsTableRow1.setMargins(0, 0, 0, ROW_MARGIN)
+
+        newTableRow.setBackgroundColor(ContextCompat.getColor(
+            applicationContext,
+            com.nathanlee.habittracker.R.color.dark_theme_table_background
+        ))
         newTableRow.setPadding(3, 3, 3, 4)
         newTableRow.layoutParams = layoutParamsTableRow1
 
@@ -543,7 +548,9 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
 
         newTableRow.setPadding(0, 0, 0, 0)
         newTableRow.layoutParams = layoutParamsTableRow
+
         this.tableTableLayout.addView(newTableRow, pos)
+
     }
 
     /*
@@ -559,9 +566,11 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         val wantedCompletion =
             completionsList.completions[completionsList.find(
                 0,
-                completionsList.completions.size-1,
+                completionsList.completions.size - 1,
                 dateList[currentColumn]
             )]
+
+        layoutParamsTableRow.setMargins(0, 0, 0, ROW_MARGIN)
 
         tableRow = TableRow(applicationContext)
         tableRow.setPadding(3, 3, 3, 4)
@@ -575,7 +584,12 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
                 )
             )
         } else {
-            tableRow.setBackgroundColor(Color.TRANSPARENT)
+            tableRow.setBackgroundColor(
+                ContextCompat.getColor(
+                    applicationContext,
+                    com.nathanlee.habittracker.R.color.dark_theme_table_background
+                )
+            )
         }
 
         tableRow.tag = "$currentRow,$currentColumn"
@@ -641,4 +655,5 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
             currentTableRow.addView(tableRow)
         }
     }
+
 }

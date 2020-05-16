@@ -82,6 +82,6 @@ class Streak(var start: Timestamp, var end: Timestamp) {
     Returns start and end date of streak
      */
     override fun toString(): String {
-        return start.toString() + " " + end.toString()
+        return "$start - $end"
     }
 }

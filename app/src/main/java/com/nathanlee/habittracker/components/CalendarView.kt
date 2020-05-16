@@ -1,23 +1,31 @@
 package com.nathanlee.habittracker.components
 
+import Completion
 import Timestamp
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.widget.*
-import java.text.SimpleDateFormat
-import java.util.*
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.nathanlee.habittracker.activities.ShowHabitActivity
+import com.nathanlee.habittracker.components.HabitManager.Companion.todayDate
 
-class CalendarView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
-
+class CalendarView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs), CalendarAdapter.OnDateListener {
     private lateinit var header: LinearLayout
     private lateinit var previousButton: ImageView
     private lateinit var nextButton: ImageView
-    private lateinit var txtDisplayDate: TextView
+    private lateinit var textDisplayMonth: TextView
+    private lateinit var textDisplayYear: TextView
     private lateinit var todayButton: Button
-    private lateinit var gridView: GridView
-    private lateinit var today: Timestamp
     private lateinit var displayDate: Timestamp
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var days: MutableList<Completion>
+    private lateinit var calendarAdapter: CalendarAdapter
+    lateinit var showHabitActivity: ShowHabitActivity
     var habitIndex: Int = 0
 
     init {
@@ -28,46 +36,127 @@ class CalendarView(context: Context, attrs: AttributeSet) : LinearLayout(context
         initializeButtons()
     }
 
+    override fun onDateClick(position: Int) {
+        val dayTimestamp = days!![position].timestamp
+        var completionStatus = days!![position].status
+
+        if (dayTimestamp.compareTo(Timestamp("00/00/0000")) != 0) {
+            when (completionStatus) {
+                2, 3 -> {
+                    HabitManager.habitList[habitIndex].editDate(dayTimestamp, 0)
+                }
+                else -> {
+                    HabitManager.habitList[habitIndex].editDate(dayTimestamp, 2)
+                }
+            }
+
+            HabitManager.rw.write(HabitManager.habitList)
+            updateCalendar(dayTimestamp)
+            showHabitActivity.updateStats()
+        }
+    }
+
+        /*
+     Find all the UI views
+     */
     private fun findUIViews() {
         header = findViewById(com.nathanlee.habittracker.R.id.date_display_linear_layout)
         previousButton = findViewById(com.nathanlee.habittracker.R.id.calendar_previous_button)
         nextButton = findViewById(com.nathanlee.habittracker.R.id.calendar_next_button)
-        txtDisplayDate = findViewById(com.nathanlee.habittracker.R.id.date_display_month)
+        textDisplayMonth = findViewById(com.nathanlee.habittracker.R.id.date_display_month)
+        textDisplayYear = findViewById(com.nathanlee.habittracker.R.id.date_display_year)
         todayButton = findViewById(com.nathanlee.habittracker.R.id.date_display_today)
-        gridView = findViewById(com.nathanlee.habittracker.R.id.calendar_grid)
-    }
-
-    private fun initializeCalendar() {
-        val date = Date()
-        val simpleDate = SimpleDateFormat("dd/MM/yyyy").format(date)
-        today = Timestamp(simpleDate)
-        displayDate = today
-        updateCalendar(displayDate)
+        recyclerView = findViewById(com.nathanlee.habittracker.R.id.calendar_recycler)
     }
 
     /*
-     * Display dates correctly in grid
+    Updates the values for the calendar when activity opens
      */
-    fun updateCalendar(date: Timestamp) {
-        // update grid
-        gridView.adapter = CalendarAdapter(
+    private fun initializeCalendar() {
+        displayDate = todayDate
+        days = getCompletions(displayDate)
+
+        val manager = GridLayoutManager(context, 7)
+        recyclerView.layoutManager = manager
+        calendarAdapter = CalendarAdapter(
             context,
-            com.nathanlee.habittracker.R.layout.calendar_grid_layout,
             habitIndex,
-            date,
+            days,
             this
         )
-
-        txtDisplayDate.text = date.monthString(date)
+        recyclerView.adapter = calendarAdapter
     }
 
+    fun updateCalendar(date: Timestamp){
+        val year = date.yearInt
+        val month = date.monthString(date)
+        textDisplayMonth.text = "$month"
+        textDisplayYear.text = "$year"
+
+        days = getCompletions(date)
+        calendarAdapter.days = days
+        calendarAdapter.habitIndex = habitIndex
+        calendarAdapter.notifyDataSetChanged()
+    }
+
+    private fun getCompletions(today: Timestamp): MutableList<Completion>{
+        val emptyDate = Timestamp("00/00/0000")
+        val completions = HabitManager.habitList[habitIndex].completions
+        var index = completions.find(0, completions.completions.size, today)
+        val monthLength = today.monthLength(today)
+        val dayInt = today.dayInt
+
+        var daysSinceFirstDayInMonth = dayInt - 1
+        val daysUntilLastDayInMonth = monthLength - dayInt
+
+        var firstDayIndex = index - daysSinceFirstDayInMonth
+
+        if (firstDayIndex < 0) {
+            val firstOfMonth = today.getDaysBefore(daysSinceFirstDayInMonth).date
+            HabitManager.habitList[habitIndex].editDate(Timestamp(firstOfMonth), 0)
+            firstDayIndex = 0
+        }
+
+        index = completions.find(0, completions.completions.size, today)
+        var lastDayIndex = index + daysUntilLastDayInMonth
+
+        if (lastDayIndex >= completions.completions.size) {
+            lastDayIndex = HabitManager.habitList[habitIndex].completions.completions.size
+        }
+
+        val firstDayOfWeek =
+            today.getDayOfWeekIndex(completions.completions[firstDayIndex].timestamp)
+        var days = mutableListOf<Completion>()
+
+        while (days.size < firstDayOfWeek) {
+            days.add(Completion(emptyDate))
+        }
+
+        for (i in firstDayIndex..lastDayIndex) {
+            if (i < completions.completions.size) {
+                days.add(completions.completions[i])
+            } else {
+                break
+            }
+        }
+
+        while (days.size < 35){
+            days.add(Completion(emptyDate))
+        }
+
+        return days
+    }
+
+    /*
+    Sets the listeners for each button
+     */
     private fun initializeButtons() {
         nextButton.setOnClickListener {
             displayDate = displayDate.getNextMonth(displayDate)
-            if (displayDate.compareTo(today) != 1) {
+            if (displayDate.compareTo(todayDate) != 1) {
                 updateCalendar(displayDate)
             } else {
-                displayDate = today
+                displayDate = todayDate
             }
         }
 
@@ -77,7 +166,7 @@ class CalendarView(context: Context, attrs: AttributeSet) : LinearLayout(context
         }
 
         todayButton.setOnClickListener {
-            displayDate = today
+            displayDate = todayDate
             updateCalendar(displayDate)
         }
     }

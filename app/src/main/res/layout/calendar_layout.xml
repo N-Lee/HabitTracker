@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/divider_margin">
 
     <RelativeLayout
         android:id="@+id/calendar_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/darkThemeBackground"
+        
         android:gravity="center_horizontal">
 
         <ImageView
@@ -31,12 +32,23 @@
             <TextView
                 android:id="@+id/date_display_month"
                 android:layout_width="wrap_content"
-                android:layout_height="55dp"
+                android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="Feb"
                 android:textAppearance="@android:style/TextAppearance.Large"
-                android:textColor="@color/darkThemeTitle"
+                android:textColor="@color/dark_theme_title"
                 android:textSize="30sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/date_display_year"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="2020"
+                android:textAppearance="@android:style/TextAppearance.Large"
+                android:textColor="@color/dark_theme_title"
+                android:textSize="15sp"
                 android:textStyle="bold" />
 
         </LinearLayout>
@@ -56,9 +68,9 @@
         android:id="@+id/calendar_today"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:background="@color/darkThemeBackground"
-        android:layout_below="@+id/calendar_title">
+        android:layout_below="@+id/calendar_title"
+        
+        android:gravity="center">
 
         <Button
             android:id="@+id/date_display_today"
@@ -66,7 +78,7 @@
             android:layout_height="30dp"
             android:gravity="center"
             android:padding="5dp"
-            android:text="Go to today"
+            android:text="@string/calendar_today_button"
             android:textColor="@android:color/white"
             android:textSize="11sp" />
 
@@ -78,7 +90,7 @@
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:layout_below="@+id/calendar_today"
-        android:background="@color/darkThemeBackground"
+        
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -87,65 +99,64 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:text="SUN"
-            android:textColor="@color/darkThemeTitle" />
+            android:text="@string/calendar_sunday"
+            android:textColor="@color/dark_theme_title" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:text="MON"
-            android:textColor="@color/darkThemeTitle" />
+            android:text="@string/calendar_monday"
+            android:textColor="@color/dark_theme_title" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:text="TUE"
-            android:textColor="@color/darkThemeTitle" />
+            android:text="@string/calendar_tuesday"
+            android:textColor="@color/dark_theme_title" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:text="WED"
-            android:textColor="@color/darkThemeTitle" />
+            android:text="@string/calendar_wednesday"
+            android:textColor="@color/dark_theme_title" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:text="THU"
-            android:textColor="@color/darkThemeTitle" />
+            android:text="@string/calendar_thursday"
+            android:textColor="@color/dark_theme_title" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:text="FRI"
-            android:textColor="@color/darkThemeTitle" />
+            android:text="@string/calendar_friday"
+            android:textColor="@color/dark_theme_title" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:text="SAT"
-            android:textColor="@color/darkThemeTitle" />
+            android:text="@string/calendar_saturday"
+            android:textColor="@color/dark_theme_title" />
 
     </LinearLayout>
 
-    <GridView
-        android:id="@+id/calendar_grid"
-        android:layout_width="match_parent"
-        android:layout_height="240dp"
-        android:layout_below="@+id/calendar_weekdays"
-        android:numColumns="7"
-        android:listSelector="@android:color/transparent"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/calendar_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/calendar_weekdays"/>
+            
 
 </RelativeLayout>

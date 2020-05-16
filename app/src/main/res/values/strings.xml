@@ -13,4 +13,16 @@
     <string name="habit_popup_repeat">Will repeat </string>
     <string name="habit_popup_times"> times in </string>
     <string name="habit_popup_days"> days</string>
+
+    <string name="calendar_today_button">Go To Today</string>
+    <string name="calendar_sunday">SUN</string>
+    <string name="calendar_monday">MON</string>
+    <string name="calendar_tuesday">TUE</string>
+    <string name="calendar_wednesday">WED</string>
+    <string name="calendar_thursday">THU</string>
+    <string name="calendar_friday">FRI</string>
+    <string name="calendar_saturday">SAT</string>
+
+    <string name="show_habit_streak">Streaks</string>
+    <string name="show_habit_calendar">History</string>
 </resources>
