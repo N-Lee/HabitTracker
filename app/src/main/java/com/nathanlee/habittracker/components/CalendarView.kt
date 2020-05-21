@@ -11,7 +11,9 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.nathanlee.habittracker.R
 import com.nathanlee.habittracker.activities.ShowHabitActivity
+import com.nathanlee.habittracker.components.HabitManager.Companion.editLock
 import com.nathanlee.habittracker.components.HabitManager.Companion.todayDate
 
 class CalendarView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs), CalendarAdapter.OnDateListener {
@@ -30,29 +32,33 @@ class CalendarView(context: Context, attrs: AttributeSet) : LinearLayout(context
 
     init {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        inflater.inflate(com.nathanlee.habittracker.R.layout.calendar_layout, this)
+        inflater.inflate(R.layout.calendar_layout, this)
         findUIViews()
         initializeCalendar()
         initializeButtons()
     }
 
     override fun onDateClick(position: Int) {
-        val dayTimestamp = days!![position].timestamp
-        var completionStatus = days!![position].status
+        if (!editLock) {
+            editLock = true
+            val dayTimestamp = days!![position].timestamp
+            var completionStatus = days!![position].status
 
-        if (dayTimestamp.compareTo(Timestamp("00/00/0000")) != 0) {
-            when (completionStatus) {
-                2, 3 -> {
-                    HabitManager.habitList[habitIndex].editDate(dayTimestamp, 0)
+            if (dayTimestamp.compareTo(Timestamp("00/00/0000")) != 0) {
+                when (completionStatus) {
+                    2, 3 -> {
+                        HabitManager.habitList[habitIndex].editDate(dayTimestamp, 0)
+                    }
+                    else -> {
+                        HabitManager.habitList[habitIndex].editDate(dayTimestamp, 2)
+                    }
                 }
-                else -> {
-                    HabitManager.habitList[habitIndex].editDate(dayTimestamp, 2)
-                }
+
+                HabitManager.rw.write(HabitManager.habitList)
+                updateCalendar(dayTimestamp)
+                showHabitActivity.updateStats()
             }
-
-            HabitManager.rw.write(HabitManager.habitList)
-            updateCalendar(dayTimestamp)
-            showHabitActivity.updateStats()
+            editLock = false
         }
     }
 
@@ -60,13 +66,13 @@ class CalendarView(context: Context, attrs: AttributeSet) : LinearLayout(context
      Find all the UI views
      */
     private fun findUIViews() {
-        header = findViewById(com.nathanlee.habittracker.R.id.date_display_linear_layout)
-        previousButton = findViewById(com.nathanlee.habittracker.R.id.calendar_previous_button)
-        nextButton = findViewById(com.nathanlee.habittracker.R.id.calendar_next_button)
-        textDisplayMonth = findViewById(com.nathanlee.habittracker.R.id.date_display_month)
-        textDisplayYear = findViewById(com.nathanlee.habittracker.R.id.date_display_year)
-        todayButton = findViewById(com.nathanlee.habittracker.R.id.date_display_today)
-        recyclerView = findViewById(com.nathanlee.habittracker.R.id.calendar_recycler)
+        header = findViewById(R.id.date_display_linear_layout)
+        previousButton = findViewById(R.id.calendar_previous_button)
+        nextButton = findViewById(R.id.calendar_next_button)
+        textDisplayMonth = findViewById(R.id.date_display_month)
+        textDisplayYear = findViewById(R.id.date_display_year)
+        todayButton = findViewById(R.id.date_display_today)
+        recyclerView = findViewById(R.id.calendar_recycler)
     }
 
     /*

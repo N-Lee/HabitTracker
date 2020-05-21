@@ -11,6 +11,8 @@ import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
+import com.nathanlee.habittracker.R
+import components.ColourManager
 
 class StreakChartView(var habitIndex: Int, var streakChart: BarChart, var context: Context) {
 
@@ -39,7 +41,7 @@ class StreakChartView(var habitIndex: Int, var streakChart: BarChart, var contex
         dataSet.setDrawValues(true)
         dataSet.valueTextSize = 10f
         dataSet.valueTextColor =
-            ContextCompat.getColor(context, com.nathanlee.habittracker.R.color.dark_theme_title)
+            ContextCompat.getColor(context, R.color.dark_theme_title)
         dataSet.color = colour
         dataSet.valueFormatter = (object : ValueFormatter() {
             override fun getFormattedValue(value: Float): String {
@@ -76,7 +78,7 @@ class StreakChartView(var habitIndex: Int, var streakChart: BarChart, var contex
         xAxis.labelCount = streakDates.size
         xAxis.isGranularityEnabled = true
         xAxis.textColor =
-            ContextCompat.getColor(context, com.nathanlee.habittracker.R.color.dark_theme_title)
+            ContextCompat.getColor(context, R.color.dark_theme_title)
 
         var params = layout.layoutParams
         params.height =
@@ -100,7 +102,7 @@ class StreakChartView(var habitIndex: Int, var streakChart: BarChart, var contex
         dataSet.setDrawValues(true)
         dataSet.valueTextSize = 10f
         dataSet.valueTextColor =
-            ContextCompat.getColor(context, com.nathanlee.habittracker.R.color.dark_theme_title)
+            ContextCompat.getColor(context, R.color.dark_theme_title)
         dataSet.color = colour
         dataSet.valueFormatter = (object : ValueFormatter() {
             override fun getFormattedValue(value: Float): String {

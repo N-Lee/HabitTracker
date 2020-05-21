@@ -31,7 +31,8 @@
                     android:layout_height="wrap_content"
                     android:paddingLeft="10dp"
                     android:paddingTop="10dp"
-                    android:text="@string/show_habit_calendar" />
+                    android:text="@string/show_habit_calendar"
+                    android:textSize="@dimen/show_habit_view_text" />
 
                 <com.nathanlee.habittracker.components.CalendarView
                     android:id="@+id/calendar"
@@ -54,7 +55,8 @@
                     android:layout_height="wrap_content"
                     android:paddingLeft="10dp"
                     android:paddingTop="10dp"
-                    android:text="@string/show_habit_streak" />
+                    android:text="@string/show_habit_streak"
+                    android:textSize="@dimen/show_habit_view_text" />
 
                 <LinearLayout
                     android:id="@+id/chart_layout"

@@ -3,10 +3,13 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="dark_theme_actionbar">#292929</color>
 
     <color name="dark_theme_background">#303030</color>
     <color name="dark_theme_title">#FFFFFF</color>
     <color name="dark_theme_hint">#727272</color>
+
+    <color name="dark_theme_delete">#DF1F1F</color>
 
     <color name="dark_theme_table_background">#525151</color>
 

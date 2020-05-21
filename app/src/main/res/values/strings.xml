@@ -25,4 +25,8 @@
 
     <string name="show_habit_streak">Streaks</string>
     <string name="show_habit_calendar">History</string>
+
+    <string name="confirmation_popup_title">Confirm</string>
+    <string name="confirmation_popup_text">Are you sure you want to delete this habit permanently?</string>
+    <string name="confirmation_popup_delete">Delete</string>
 </resources>

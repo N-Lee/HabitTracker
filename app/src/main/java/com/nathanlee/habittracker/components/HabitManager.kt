@@ -12,7 +12,8 @@ class HabitManager: Application() {
         lateinit var habitList: MutableList<Habit>
         lateinit var rw: ReadWriteJson
         val date = Date()
-        val simpleDate = SimpleDateFormat("dd/MM/yyyy").format(date)
+        private val simpleDate = SimpleDateFormat("dd/MM/yyyy").format(date)
         val todayDate = Timestamp(simpleDate)
+        var editLock = false
     }
 }

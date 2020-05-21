@@ -1,27 +1,28 @@
-package com.nathanlee.habittracker.components
+package components
 
 import android.content.Context
 import androidx.core.content.ContextCompat
+import com.nathanlee.habittracker.R
 
 object ColourManager {
     val darkTheme: IntArray = intArrayOf(
-        com.nathanlee.habittracker.R.color.dark_theme_grey,
-        com.nathanlee.habittracker.R.color.dark_theme_blue,
-        com.nathanlee.habittracker.R.color.dark_theme_green,
-        com.nathanlee.habittracker.R.color.dark_theme_orange,
-        com.nathanlee.habittracker.R.color.dark_theme_pink,
-        com.nathanlee.habittracker.R.color.dark_theme_purple,
-        com.nathanlee.habittracker.R.color.dark_theme_yellow
+        R.color.dark_theme_grey,
+        R.color.dark_theme_blue,
+        R.color.dark_theme_green,
+        R.color.dark_theme_orange,
+        R.color.dark_theme_pink,
+        R.color.dark_theme_purple,
+        R.color.dark_theme_yellow
     )
 
     val partialCompleteDarkTheme: IntArray = intArrayOf(
-        com.nathanlee.habittracker.R.color.dark_theme_light_grey,
-        com.nathanlee.habittracker.R.color.dark_theme_light_blue,
-        com.nathanlee.habittracker.R.color.dark_theme_light_green,
-        com.nathanlee.habittracker.R.color.dark_theme_light_orange,
-        com.nathanlee.habittracker.R.color.dark_theme_light_pink,
-        com.nathanlee.habittracker.R.color.dark_theme_light_purple,
-        com.nathanlee.habittracker.R.color.dark_theme_light_yellow
+        R.color.dark_theme_light_grey,
+        R.color.dark_theme_light_blue,
+        R.color.dark_theme_light_green,
+        R.color.dark_theme_light_orange,
+        R.color.dark_theme_light_pink,
+        R.color.dark_theme_light_purple,
+        R.color.dark_theme_light_yellow
     )
 
     fun selectColour(colour: String, context: Context): Int {
@@ -92,30 +93,30 @@ object ColourManager {
 
     fun colourIdToString(colourId: Int): String {
         when (colourId) {
-            com.nathanlee.habittracker.R.id.grey_radio -> {
+            R.id.grey_radio -> {
                 return "Grey"
             }
-            com.nathanlee.habittracker.R.id.blue_radio -> {
+            R.id.blue_radio -> {
                 return "Blue"
             }
 
-            com.nathanlee.habittracker.R.id.green_radio -> {
+            R.id.green_radio -> {
                 return "Green"
             }
 
-            com.nathanlee.habittracker.R.id.orange_radio -> {
+            R.id.orange_radio -> {
                 return "Orange"
             }
 
-            com.nathanlee.habittracker.R.id.pink_radio -> {
+            R.id.pink_radio -> {
                 return "Pink"
             }
 
-            com.nathanlee.habittracker.R.id.purple_radio -> {
+            R.id.purple_radio -> {
                 return "Purple"
             }
 
-            com.nathanlee.habittracker.R.id.yellow_radio -> {
+            R.id.yellow_radio -> {
                 return "Yellow"
             }
         }
@@ -126,34 +127,34 @@ object ColourManager {
     fun colourStringToID(string: String): Int {
         when (string) {
             "Grey" -> {
-                return com.nathanlee.habittracker.R.id.grey_radio
+                return R.id.grey_radio
             }
 
             "Blue" -> {
-                return com.nathanlee.habittracker.R.id.blue_radio
+                return R.id.blue_radio
             }
 
             "Green" -> {
-                return com.nathanlee.habittracker.R.id.green_radio
+                return R.id.green_radio
             }
 
             "Orange" -> {
-                return com.nathanlee.habittracker.R.id.orange_radio
+                return R.id.orange_radio
             }
 
             "Pink" -> {
-                return com.nathanlee.habittracker.R.id.pink_radio
+                return R.id.pink_radio
             }
 
             "Purple" -> {
-                return com.nathanlee.habittracker.R.id.purple_radio
+                return R.id.purple_radio
             }
 
             "Yellow" -> {
-                return com.nathanlee.habittracker.R.id.yellow_radio
+                return R.id.yellow_radio
             }
         }
 
-        return com.nathanlee.habittracker.R.id.grey_radio
+        return R.id.grey_radio
     }
 }

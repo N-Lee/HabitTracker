@@ -22,17 +22,18 @@ class HorizontalScroll : HorizontalScrollView {
         context,
         attrs,
         defStyleAttr
-    ) {
-    }
-
-    fun setScrollViewListener(scrollViewListener: ScrollViewListener) {
-        this.scrollViewListener = scrollViewListener
-    }
+    )
 
     override fun onScrollChanged(x: Int, y: Int, oldX: Int, oldY: Int) {
         super.onScrollChanged(x, y, oldX, oldY)
         if (scrollViewListener != null) {
             scrollViewListener!!.onScrollChanged(this, x, y, oldX, oldY)
         }
+    }
+
+    override fun fling(velocityX: Int) {}
+
+    fun setScrollViewListener(scrollViewListener: ScrollViewListener) {
+        this.scrollViewListener = scrollViewListener
     }
 }

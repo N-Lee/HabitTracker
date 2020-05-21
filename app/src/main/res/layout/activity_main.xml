@@ -7,6 +7,17 @@
     tools:context=".activities.MainActivity">
 
 
+    <TextView
+        android:id="@+id/scrollLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:text="TextView"
+        android:textColor="#4FC3F7"
+        app:layout_constraintBottom_toTopOf="@+id/main_relative_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <RelativeLayout
         android:id="@+id/main_relative_layout"
         android:layout_width="wrap_content"

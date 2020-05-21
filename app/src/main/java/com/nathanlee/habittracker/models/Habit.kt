@@ -2,23 +2,21 @@ package com.nathanlee.habittracker.models
 
 import Completion
 import CompletionList
-import Frequency
 import Streak
 import StreakList
 import Timestamp
 import android.os.Parcel
 import android.os.Parcelable
-import android.util.Log
+import kotlin.math.abs
 
 class Habit(
     var name: String,
     var description: String,
     var colour: String,
-    private var numerator: Int,
-    private var denominator: Int
+    var numerator: Int,
+    var denominator: Int
 ) : Parcelable {
 
-    private var frequency: Frequency = Frequency(numerator, denominator)
     var completions: CompletionList = CompletionList()
     var streaks: StreakList = StreakList()
 
@@ -58,38 +56,6 @@ class Habit(
     }
 
     /*
-    Every date will fall under a period that is the length of the frequency denominator
-    Determines what the start and end date is of the period the date falls under
-     */
-    fun getPeriod(date: Timestamp): Array<Timestamp> {
-        if (streaks.streaks.isEmpty()) {
-            System.err.println("Streaks is empty when trying to find period")
-        }
-
-        var timestampStreakIndex = streaks.find(0, streaks.streaks.size - 1, date)
-        var currentStartPeriod = completions.completions[0].timestamp
-        lateinit var currentEndPeriod: Timestamp
-        lateinit var currentPeriod: Array<Timestamp>
-
-        if (date.compareTo(currentStartPeriod) == -1 || timestampStreakIndex < 0) {
-            currentEndPeriod = date.getDaysAfter(frequency.denominator - 1)
-            return arrayOf(date, currentEndPeriod)
-        } else if (timestampStreakIndex >= 0) {
-            currentStartPeriod = streaks.streaks[timestampStreakIndex].start
-            currentEndPeriod = currentStartPeriod.getDaysAfter(frequency.denominator - 1)
-            currentPeriod = arrayOf(currentStartPeriod, currentEndPeriod)
-
-            while (currentEndPeriod.compareTo(date) == -1) {
-                currentStartPeriod = currentStartPeriod.getDaysAfter(frequency.denominator)
-                currentEndPeriod = currentStartPeriod.getDaysAfter(frequency.denominator - 1)
-                currentPeriod = arrayOf(currentStartPeriod, currentEndPeriod)
-            }
-        }
-        //println("Start: " + currentPeriod[0].toString() + " End: " + currentPeriod[1].toString())
-        return currentPeriod
-    }
-
-    /*
     Goes through every completions starting from the streak start of the given date
     Then it marks whether a status should remain incomplete or should pass due to the frequency being met
     */
@@ -120,12 +86,12 @@ class Habit(
             if (isInStreak) {
                 var startIndex = index
                 if (isFrequencyMet(index)) {
-                    index += frequency.denominator
+                    index += denominator
                     markCompletions(startIndex, index - 1)
                 } else {
                     var lastCompletedInPeriod = lastCompleteInPeriod(index)
                     if (lastCompletedInPeriod == -1) {
-                        startIndex -= frequency.denominator
+                        startIndex -= denominator
                         --index
                     } else {
                         index = lastCompletedInPeriod
@@ -175,14 +141,14 @@ class Habit(
                 2 -> {
                     count++
 
-                    if (count > frequency.numerator) {
+                    if (count > numerator) {
                         completions.completions[i].status = 3
                     }
                 }
                 3 -> {
                     count++
 
-                    if (count <= frequency.numerator) {
+                    if (count <= numerator) {
                         completions.completions[i].status = 2
                     }
                 }
@@ -200,9 +166,9 @@ class Habit(
             System.err.println("Invalid period")
         }
 
-        for (i in startIndex until startIndex + frequency.denominator) {
+        for (i in startIndex until startIndex + denominator) {
             if (i > completions.completions.size - 1) {
-                if (counter >= frequency.numerator) {
+                if (counter >= numerator) {
                     return true
                 }
                 break
@@ -212,7 +178,7 @@ class Habit(
                 counter++
             }
 
-            if (counter >= frequency.numerator) {
+            if (counter >= numerator) {
                 return true
             }
         }
@@ -224,7 +190,7 @@ class Habit(
     Finds the first date within a period that was completed
      */
     private fun firstCompleteInPeriod(startIndex: Int): Int {
-        var endIndex = startIndex + frequency.denominator - 1
+        var endIndex = startIndex + denominator - 1
 
         if (startIndex == -1) {
             return -1
@@ -248,7 +214,7 @@ class Habit(
     Finds the last date within a period that was completed
      */
     private fun lastCompleteInPeriod(startIndex: Int): Int {
-        var endIndex = startIndex + frequency.denominator - 1
+        var endIndex = startIndex + denominator - 1
         var lastIndex = -1
 
         if (startIndex == -1) {
@@ -272,7 +238,7 @@ class Habit(
     Empties streak list, goes through every date in completions starting at given date, and adds all streaks
      */
     fun updatePeriodStreak(date: Timestamp) {
-        var streakIndex = Math.abs(streaks.find(0, streaks.streaks.size - 1, date))
+        var streakIndex = abs(streaks.find(0, streaks.streaks.size - 1, date))
         var index: Int
         var isStartStreak = true
         var isLastPeriod = false
@@ -286,10 +252,10 @@ class Habit(
             streaks.add(newStreak)
         }
 
-        if (date.compareTo(streaks.streaks[streakIndex].start) == -1) {
-            index = 0
+        index = if (date.compareTo(streaks.streaks[streakIndex].start) == -1) {
+            0
         } else {
-            index = completions.find(
+            completions.find(
                 0,
                 completions.completions.size - 1,
                 streaks.streaks[streakIndex].start
@@ -307,9 +273,9 @@ class Habit(
                 }
             }
 
-            var periodEndIndex = index + frequency.denominator - 1
+            var periodEndIndex = index + denominator - 1
 
-            if (periodEndIndex > completions.completions.size - 1) {
+            if (periodEndIndex >= completions.completions.size - 1) {
                 isLastPeriod = true
             }
 
@@ -326,7 +292,7 @@ class Habit(
                     newStreak = Streak(startTimestamp, endTimestamp)
                     streaks.add(newStreak)
                 }
-                index += frequency.denominator
+                index += denominator
             } else {
                 if (firstIndex != -1) {
                     if (isStartStreak) {
@@ -338,7 +304,7 @@ class Habit(
                     isStartStreak = true
                     var firstCompleteNextPeriod = firstCompleteInPeriod(lastIndex + 1)
                     if (firstCompleteNextPeriod == -1) {
-                        index = lastIndex + frequency.denominator
+                        index = lastIndex + denominator
                     } else {
                         index = firstCompleteNextPeriod
                     }
@@ -350,7 +316,7 @@ class Habit(
                         isStartStreak = true
                     }
 
-                    index += frequency.denominator
+                    index += denominator
                 }
             }
 
@@ -375,30 +341,10 @@ class Habit(
         this.colour = colour
         this.numerator = numerator
         this.denominator = denominator
-        frequency.numerator = numerator
-        frequency.denominator = denominator
-    }
-
-    /*
-    Setter for frequency
-     */
-    fun setFrequency(denominator: Int, numerator: Int) {
-        frequency.denominator = denominator
-        frequency.numerator = numerator
-    }
-
-    /*
-    Getter for frequency numerator
-     */
-    fun getNumerator(): Int {
-        return frequency.numerator
-    }
-
-    /*
-    Getter for frequency denominator
-     */
-    fun getDenominator(): Int {
-        return frequency.denominator
+        if (numerator == denominator) {
+            this.numerator = 1
+            this.denominator = 1
+        }
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {

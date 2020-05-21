@@ -1,22 +1,26 @@
 package com.nathanlee.habittracker.activities
 
 import android.content.Intent
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.github.mikephil.charting.charts.BarChart
+import com.nathanlee.habittracker.R
 import com.nathanlee.habittracker.components.CalendarView
-import com.nathanlee.habittracker.components.ColourManager
 import com.nathanlee.habittracker.components.HabitManager
 import com.nathanlee.habittracker.components.HabitManager.Companion.habitList
 import com.nathanlee.habittracker.components.HabitManager.Companion.todayDate
 import com.nathanlee.habittracker.components.StreakChartView
 import com.nathanlee.habittracker.models.Habit
+import components.ColourManager
 
-// TODO: Make the chart change size based on how many bars there are
+//TODO: Add an overview section
+//TODO: Notifications
 
 class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
     private lateinit var habit: Habit
@@ -29,11 +33,20 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(com.nathanlee.habittracker.R.layout.activity_show_habit)
+        setContentView(R.layout.activity_show_habit)
 
         val actionBar = supportActionBar
         actionBar!!.setDisplayShowHomeEnabled(true)
         actionBar!!.setDisplayHomeAsUpEnabled(true)
+        actionBar!!.elevation = 0f
+        actionBar!!.setBackgroundDrawable(
+            ColorDrawable(
+                ContextCompat.getColor(
+                    baseContext,
+                    R.color.dark_theme_actionbar
+                )
+            )
+        )
 
         if (intent.hasExtra("habit_index")) {
             habitIndex = intent.extras!!.getInt("habit_index")
@@ -41,18 +54,18 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
             actionBar!!.title = habit.name
         }
 
-        layout = findViewById(com.nathanlee.habittracker.R.id.chart_layout)
+        layout = findViewById(R.id.chart_layout)
 
-        val chart: BarChart = findViewById(com.nathanlee.habittracker.R.id.streak_chart)
+        val chart: BarChart = findViewById(R.id.streak_chart)
         streakChartView = StreakChartView(habitIndex, chart, this@ShowHabitActivity)
         streakChartView.createGraph(layout)
 
-        calendarView = findViewById(com.nathanlee.habittracker.R.id.calendar)
+        calendarView = findViewById(R.id.calendar)
         calendarView.habitIndex = habitIndex
         calendarView.showHabitActivity = this
         calendarView.updateCalendar(todayDate)
 
-        calendarText = findViewById(com.nathanlee.habittracker.R.id.history_text)
+        calendarText = findViewById(R.id.history_text)
         calendarText.setTextColor(
             ColourManager.selectColour(
                 habitList[habitIndex].colour,
@@ -60,7 +73,7 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
             )
         )
 
-        streakText = findViewById(com.nathanlee.habittracker.R.id.streak_text)
+        streakText = findViewById(R.id.streak_text)
         streakText.setTextColor(
             ColourManager.selectColour(
                 habitList[habitIndex].colour,
@@ -71,7 +84,7 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(com.nathanlee.habittracker.R.menu.show_habit, menu)
+        menuInflater.inflate(R.menu.show_habit, menu)
 
         return super.onCreateOptionsMenu(menu)
     }
@@ -83,8 +96,11 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
                 homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 startActivity(homeIntent)
             }
-            com.nathanlee.habittracker.R.id.edit_habit_app_bar -> {
+            R.id.edit_habit_app_bar -> {
                 openHabitDialog()
+            }
+            R.id.delete_habit_app_bar -> {
+                openConfirmationDialog()
             }
         }
         return super.onOptionsItemSelected(menuItem)
@@ -98,12 +114,11 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
             habit.name,
             habit.description,
             habit.colour,
-            habit.getNumerator(),
-            habit.getDenominator()
+            habit.numerator,
+            habit.denominator
         )
         habitList[habitIndex].updatePeriodCompletions(habitList[habitIndex].completions.completions.first().timestamp)
         habitList[habitIndex].updatePeriodStreak(habitList[habitIndex].completions.completions.first().timestamp)
-        habitList[habitIndex].setFrequency(habit.getDenominator(), habit.getNumerator())
         HabitManager.rw.write(habitList)
 
         val actionBar = supportActionBar
@@ -119,7 +134,12 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
      */
     private fun openHabitDialog() {
         var newDialog = HabitDialog(false, habit)
-        newDialog.show(supportFragmentManager, "Show com.nathanlee.habittracker.models.Habit")
+        newDialog.show(supportFragmentManager, "Show models.Habit")
+    }
+
+    private fun openConfirmationDialog() {
+        var newDialog = ConfirmationDialog(this)
+        newDialog.show(supportFragmentManager, "Show models.Habit")
     }
 
     fun updateStats() {
@@ -138,5 +158,17 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
 
         streakChartView.refreshColour()
         streakChartView.updateGraph(layout)
+    }
+
+    fun delete(){
+        if (!HabitManager.editLock) {
+            HabitManager.editLock = true
+            habitList.removeAt(habitIndex)
+            HabitManager.rw.write(habitList)
+            HabitManager.editLock = false
+        }
+
+        var startIntent = Intent(applicationContext, MainActivity::class.java)
+        startActivity(startIntent)
     }
 }

@@ -8,4 +8,10 @@
         android:orderInCategory="100"
         android:icon="@drawable/edit_habit_image"/>
 
+    <item android:title="DeleteHabit"
+        android:id="@+id/delete_habit_app_bar"
+        app:showAsAction="always"
+        android:orderInCategory="101"
+        android:icon="@drawable/delete"/>
+
 </menu>

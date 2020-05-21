@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.nathanlee.habittracker.R
+import components.ColourManager
 
 class CalendarAdapter(
     var context: Context,
@@ -19,7 +21,7 @@ class CalendarAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         var dateView: View = LayoutInflater.from(parent.context)
-            .inflate(com.nathanlee.habittracker.R.layout.calendar_grid_layout, parent, false)
+            .inflate(R.layout.calendar_grid_layout, parent, false)
         return ViewHolder(dateView, onDateListener)
     }
 
@@ -65,9 +67,9 @@ class CalendarAdapter(
 
     class ViewHolder(view: View, var onDateListener: OnDateListener) :
         RecyclerView.ViewHolder(view), View.OnClickListener {
-        var dateText: TextView = view.findViewById(com.nathanlee.habittracker.R.id.calendar_date)
+        var dateText: TextView = view.findViewById(R.id.calendar_date)
         var dateLayout: LinearLayout =
-            view.findViewById(com.nathanlee.habittracker.R.id.calendar_item_layout)
+            view.findViewById(R.id.calendar_item_layout)
 
         init {
             view.setOnClickListener(this)
