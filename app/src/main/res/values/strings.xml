@@ -23,8 +23,13 @@
     <string name="calendar_friday">FRI</string>
     <string name="calendar_saturday">SAT</string>
 
-    <string name="show_habit_streak">Streaks</string>
+    <string name="show_habit_overview">Overview</string>
+    <string name="show_habit_first_day">\nFirst Day</string>
+    <string name="show_habit_repeat">\nRepeat</string>
+    <string name="show_habit_notification">\nNotification</string>
+    <string name="show_habit_total">\nCompletions</string>
     <string name="show_habit_calendar">History</string>
+    <string name="show_habit_streak">Streaks</string>
 
     <string name="confirmation_popup_title">Confirm</string>
     <string name="confirmation_popup_text">Are you sure you want to delete this habit permanently?</string>

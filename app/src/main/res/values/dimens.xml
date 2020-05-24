@@ -11,7 +11,13 @@
     <dimen name="habit_pop_up_text">18sp</dimen>
     <dimen name="habit_pop_up_title_text">20sp</dimen>
 
-    <dimen name="button_height">50dp</dimen>
     <dimen name="button_margin">8dp</dimen>
     <dimen name="divider_margin">15dp</dimen>
+
+    <dimen name="show_habit_left_padding">10dp</dimen>
+    <dimen name="show_habit_top_padding">10dp</dimen>
+    <dimen name="show_habit_bottom_padding">10dp</dimen>
+    <dimen name="show_habit_spacing_between_layouts">10dp</dimen>
+
+    <dimen name="overview_padding">15dp</dimen>
 </resources>

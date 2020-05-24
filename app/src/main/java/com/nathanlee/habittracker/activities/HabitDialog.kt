@@ -3,7 +3,6 @@ package com.nathanlee.habittracker.activities
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -32,7 +31,7 @@ class HabitDialog(isNew: Boolean) : AppCompatDialogFragment() {
     private lateinit var listener: HabitDialogListener
     private lateinit var error: Toast
 
-    constructor (isNew: Boolean, habit: Habit): this(isNew){
+    constructor (isNew: Boolean, habit: Habit) : this(isNew) {
         this.habit = habit
     }
 
@@ -65,7 +64,7 @@ class HabitDialog(isNew: Boolean) : AppCompatDialogFragment() {
             view.findViewById(R.id.habit_numerator_edit_text)
         habitDenominatorEditText =
             view.findViewById(R.id.habit_denominator_edit_text)
-        if (isNew){
+        if (isNew) {
             titleTextView.setText(R.string.habit_popup_title_new)
         } else {
             habitNameEditText.setText(habit.name)
@@ -113,13 +112,21 @@ class HabitDialog(isNew: Boolean) : AppCompatDialogFragment() {
 
             if (numerator > denominator) {
                 error = Toast.makeText(
-                        requireContext(),
-                        "First number cannot be greater than the second number",
-                        Toast.LENGTH_SHORT
-                    )
+                    requireContext(),
+                    "First number cannot be greater than the second number",
+                    Toast.LENGTH_SHORT
+                )
                 error.show()
                 return
-            } else if (numerator == denominator){
+            } else if (numerator <= 0 || denominator <= 0) {
+                error = Toast.makeText(
+                    requireContext(),
+                    "The numbers must be greater than 0",
+                    Toast.LENGTH_SHORT
+                )
+                error.show()
+                return
+            } else if (numerator == denominator) {
                 numerator = 1
                 denominator = 1
             }

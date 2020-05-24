@@ -56,7 +56,7 @@ class CalendarView(context: Context, attrs: AttributeSet) : LinearLayout(context
 
                 HabitManager.rw.write(HabitManager.habitList)
                 updateCalendar(dayTimestamp)
-                showHabitActivity.updateStats()
+                showHabitActivity.updateCompletionText()
             }
             editLock = false
         }

@@ -19,18 +19,92 @@
             android:orientation="vertical">
 
             <RelativeLayout
+                android:id="@+id/overview_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/show_habit_spacing_between_layouts"
+                android:background="@color/dark_theme_table_background"
+                android:paddingBottom="@dimen/show_habit_left_padding">
+
+                <TextView
+                    android:id="@+id/overview_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingLeft="@dimen/show_habit_left_padding"
+                    android:paddingTop="@dimen/show_habit_top_padding"
+                    android:paddingBottom="@dimen/show_habit_bottom_padding"
+                    android:text="@string/show_habit_overview"
+                    android:textSize="@dimen/show_habit_view_text" />
+
+                <RelativeLayout
+                    android:id="@+id/overview_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/overview_text"
+                    android:paddingBottom="@dimen/show_habit_bottom_padding"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/overview_first_day"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="First Day"
+                        android:textColor="@color/dark_theme_title" />
+
+                    <TextView
+                        android:id="@+id/overview_total"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/overview_first_day"
+                        android:gravity="center"
+                        android:paddingLeft="@dimen/overview_padding"
+                        android:text="Total"
+                        android:textColor="@color/dark_theme_title" />
+
+                    <TextView
+                        android:id="@+id/overview_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/overview_total"
+                        android:gravity="center"
+                        android:paddingLeft="@dimen/overview_padding"
+                        android:text="Frequency"
+                        android:textColor="@color/dark_theme_title" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/overview_info"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/overview_notification"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:paddingLeft="@dimen/overview_padding"
+                        android:text="Notification"
+                        android:textColor="@color/dark_theme_title" />
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:id="@+id/calendar_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="@dimen/show_habit_spacing_between_layouts"
                 android:background="@color/dark_theme_table_background">
 
                 <TextView
                     android:id="@+id/history_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="10dp"
-                    android:paddingTop="10dp"
+                    android:paddingLeft="@dimen/show_habit_left_padding"
+                    android:paddingTop="@dimen/show_habit_top_padding"
                     android:text="@string/show_habit_calendar"
                     android:textSize="@dimen/show_habit_view_text" />
 
@@ -46,15 +120,15 @@
                 android:id="@+id/streak_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="@dimen/show_habit_spacing_between_layouts"
                 android:background="@color/dark_theme_table_background">
 
                 <TextView
                     android:id="@+id/streak_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="10dp"
-                    android:paddingTop="10dp"
+                    android:paddingLeft="@dimen/show_habit_left_padding"
+                    android:paddingTop="@dimen/show_habit_top_padding"
                     android:text="@string/show_habit_streak"
                     android:textSize="@dimen/show_habit_view_text" />
 
@@ -67,8 +141,7 @@
                     <com.github.mikephil.charting.charts.HorizontalBarChart
                         android:id="@+id/streak_chart"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginBottom="15dp" />
+                        android:layout_height="match_parent" />
                 </LinearLayout>
             </RelativeLayout>
 

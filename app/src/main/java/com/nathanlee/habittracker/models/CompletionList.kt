@@ -1,5 +1,6 @@
 class CompletionList {
     var completions = mutableListOf<Completion>()
+    var total = 0
 
     /*
     Given a new completion, fill in the dates between the new completion and the closest completion date
@@ -8,7 +9,15 @@ class CompletionList {
     fun edit(newCompletion: Completion, timePeriod: Int) {
         var date = newCompletion.timestamp
 
-        if (completions.isEmpty()){
+        if (timePeriod == 0) {
+            if (newCompletion.status == 2 || newCompletion.status == 3) {
+                total++
+            } else {
+                total--
+            }
+        }
+
+        if (completions.isEmpty()) {
             completions.add(newCompletion)
             return
         }

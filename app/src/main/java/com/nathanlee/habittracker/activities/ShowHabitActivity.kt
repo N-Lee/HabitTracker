@@ -3,6 +3,8 @@ package com.nathanlee.habittracker.activities
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.LinearLayout
@@ -24,12 +26,23 @@ import components.ColourManager
 
 class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
     private lateinit var habit: Habit
+    private var habitColour = 0
     private var habitIndex = 0
     private lateinit var calendarView: CalendarView
     private lateinit var streakChartView: StreakChartView
     private lateinit var layout: LinearLayout
+    private lateinit var overviewText: TextView
+    private lateinit var firstDayText: TextView
+    private lateinit var totalText: TextView
+    private lateinit var frequencyText: TextView
+    private lateinit var notificationText: TextView
     private lateinit var calendarText: TextView
     private lateinit var streakText: TextView
+
+    private lateinit var firstDayString: SpannableString
+    private lateinit var totalString: SpannableString
+    private lateinit var repeatString: SpannableString
+    private lateinit var notificationString: SpannableString
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,14 +64,56 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
         if (intent.hasExtra("habit_index")) {
             habitIndex = intent.extras!!.getInt("habit_index")
             habit = habitList[habitIndex]
+            habitColour = ColourManager.selectColour(
+                habitList[habitIndex].colour,
+                baseContext
+            )
             actionBar!!.title = habit.name
         }
 
         layout = findViewById(R.id.chart_layout)
 
-        val chart: BarChart = findViewById(R.id.streak_chart)
-        streakChartView = StreakChartView(habitIndex, chart, this@ShowHabitActivity)
-        streakChartView.createGraph(layout)
+        overviewText = findViewById(R.id.overview_text)
+        overviewText.setTextColor(habitColour)
+
+        var overviewTextColour = ContextCompat.getColor(baseContext, R.color.dark_theme_title)
+
+        firstDayText = findViewById(R.id.overview_first_day)
+        var firstCompletion = if (habit.streaks.streaks.isEmpty()){
+            "Not started"
+        } else {
+            "${habit.streaks.streaks[0].start.toString()}"
+        }
+        var firstDayStringValue = SpannableString(firstCompletion)
+        firstDayStringValue.setSpan(ForegroundColorSpan(habitColour), 0, firstDayStringValue.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
+        firstDayString = SpannableString(getString(R.string.show_habit_first_day))
+        firstDayString.setSpan(overviewTextColour, 0, firstDayString.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
+        firstDayText.text = firstDayStringValue
+        firstDayText.append(firstDayString)
+
+        totalText = findViewById(R.id.overview_total)
+        var totalStringValue = SpannableString("${habit.completions.total}")
+        totalStringValue.setSpan(ForegroundColorSpan(habitColour), 0, totalStringValue.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
+        totalString = SpannableString(getString(R.string.show_habit_total))
+        totalString.setSpan(overviewTextColour, 0, totalString.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
+        totalText.setText(totalStringValue, TextView.BufferType.SPANNABLE)
+        totalText.append(totalString)
+
+        frequencyText = findViewById(R.id.overview_frequency)
+        var frequencyString = SpannableString("${habit.numerator} time(s) in ${habit.denominator} day(s)")
+        frequencyString.setSpan(ForegroundColorSpan(habitColour), 0, frequencyString.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
+        repeatString = SpannableString(getString(R.string.show_habit_repeat))
+        repeatString.setSpan(overviewTextColour, 0, repeatString.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
+        frequencyText.setText(frequencyString, TextView.BufferType.SPANNABLE)
+        frequencyText.append(repeatString)
+
+        notificationText= findViewById(R.id.overview_notification)
+        var notificationStringValue = SpannableString("${habit.completions.total}")
+        notificationStringValue.setSpan(ForegroundColorSpan(habitColour), 0, notificationStringValue.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
+        notificationString = SpannableString(getString(R.string.show_habit_notification))
+        notificationString.setSpan(overviewTextColour, 0, notificationString.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
+        notificationText.setText(notificationStringValue, TextView.BufferType.SPANNABLE)
+        notificationText.append(notificationString)
 
         calendarView = findViewById(R.id.calendar)
         calendarView.habitIndex = habitIndex
@@ -66,20 +121,14 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
         calendarView.updateCalendar(todayDate)
 
         calendarText = findViewById(R.id.history_text)
-        calendarText.setTextColor(
-            ColourManager.selectColour(
-                habitList[habitIndex].colour,
-                baseContext
-            )
-        )
+        calendarText.setTextColor(habitColour)
+
+        val chart: BarChart = findViewById(R.id.streak_chart)
+        streakChartView = StreakChartView(habitIndex, chart, this@ShowHabitActivity)
+        streakChartView.createGraph(layout)
 
         streakText = findViewById(R.id.streak_text)
-        streakText.setTextColor(
-            ColourManager.selectColour(
-                habitList[habitIndex].colour,
-                baseContext
-            )
-        )
+        streakText.setTextColor(habitColour)
 
     }
 
@@ -126,6 +175,10 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
         actionBar!!.setDisplayHomeAsUpEnabled(true)
         actionBar!!.title = habit.name
         calendarView.updateCalendar(todayDate)
+        habitColour = ColourManager.selectColour(
+            habitList[habitIndex].colour,
+            baseContext
+        )
         updateStats()
     }
 
@@ -142,25 +195,50 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
         newDialog.show(supportFragmentManager, "Show models.Habit")
     }
 
-    fun updateStats() {
-        streakText.setTextColor(
-            ColourManager.selectColour(
-                habitList[habitIndex].colour,
-                baseContext
-            )
-        )
-        calendarText.setTextColor(
-            ColourManager.selectColour(
-                habitList[habitIndex].colour,
-                baseContext
-            )
-        )
+    private fun updateStats() {
+        overviewText.setTextColor(habitColour)
+
+        frequencyText = findViewById(R.id.overview_frequency)
+        var frequencyString = SpannableString("${habit.numerator} time(s) in ${habit.denominator} day(s)")
+        frequencyString.setSpan(ForegroundColorSpan(habitColour), 0, frequencyString.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
+        frequencyText.setText(frequencyString, TextView.BufferType.SPANNABLE)
+        frequencyText.append(repeatString)
+
+        notificationText= findViewById(R.id.overview_notification)
+        var notificationStringValue = SpannableString("${habit.completions.total}")
+        notificationStringValue.setSpan(ForegroundColorSpan(habitColour), 0, notificationStringValue.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
+        notificationText.setText(notificationStringValue, TextView.BufferType.SPANNABLE)
+        notificationText.append(notificationString)
+
+        calendarText.setTextColor(habitColour)
+        streakText.setTextColor(habitColour)
+
+        updateCompletionText()
+    }
+
+    fun updateCompletionText() {
+        firstDayText = findViewById(R.id.overview_first_day)
+        var firstCompletion = if (habit.streaks.streaks.isEmpty()){
+            "Not started"
+        } else {
+            "${habit.streaks.streaks[0].start.toString()}"
+        }
+        var firstDayStringValue = SpannableString(firstCompletion)
+        firstDayStringValue.setSpan(ForegroundColorSpan(habitColour), 0, firstDayStringValue.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
+        firstDayText.text = firstDayStringValue
+        firstDayText.append(firstDayString)
+
+        totalText = findViewById(R.id.overview_total)
+        var totalStringValue = SpannableString("${habit.completions.total}")
+        totalStringValue.setSpan(ForegroundColorSpan(habitColour), 0, totalStringValue.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
+        totalText.setText(totalStringValue, TextView.BufferType.SPANNABLE)
+        totalText.append(totalString)
 
         streakChartView.refreshColour()
         streakChartView.updateGraph(layout)
     }
 
-    fun delete(){
+    fun delete() {
         if (!HabitManager.editLock) {
             HabitManager.editLock = true
             habitList.removeAt(habitIndex)
