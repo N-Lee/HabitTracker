@@ -13,6 +13,7 @@
     <string name="habit_popup_repeat">Will repeat </string>
     <string name="habit_popup_times"> times in </string>
     <string name="habit_popup_days"> days</string>
+    <string name="habit_popup_notification">Notification</string>
 
     <string name="calendar_today_button">Go To Today</string>
     <string name="calendar_sunday">SUN</string>
@@ -22,6 +23,15 @@
     <string name="calendar_thursday">THU</string>
     <string name="calendar_friday">FRI</string>
     <string name="calendar_saturday">SAT</string>
+
+    <string name="sunday">Sunday</string>
+    <string name="monday">Monday</string>
+    <string name="tuesday">Tuesday</string>
+    <string name="wednesday">Wednesday</string>
+    <string name="thursday">Tuesday</string>
+    <string name="friday">Friday</string>
+    <string name="saturday">Saturday</string>
+    <string name="everyday">Everyday</string>
 
     <string name="show_habit_overview">Overview</string>
     <string name="show_habit_first_day">\nFirst Day</string>
@@ -34,4 +44,6 @@
     <string name="confirmation_popup_title">Confirm</string>
     <string name="confirmation_popup_text">Are you sure you want to delete this habit permanently?</string>
     <string name="confirmation_popup_delete">Delete</string>
+
+    <string name="settings_notification">Notification</string>
 </resources>

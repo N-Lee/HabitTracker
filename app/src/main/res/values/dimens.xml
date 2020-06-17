@@ -2,7 +2,6 @@
 <resources>
     <dimen name="header_cell_text_size">4sp</dimen>
     <dimen name="cell_text_size">4sp</dimen>
-    <dimen name="show_habit_view_text">20sp</dimen>
 
     <dimen name="calendar_month_text">20sp</dimen>
     <dimen name="calendar_year_text">12sp</dimen>
@@ -10,6 +9,8 @@
 
     <dimen name="habit_pop_up_text">18sp</dimen>
     <dimen name="habit_pop_up_title_text">20sp</dimen>
+    <dimen name="habit_pop_up_time">30sp</dimen>
+    <dimen name="habit_pop_up_checkbox_space">5dp</dimen>
 
     <dimen name="button_margin">8dp</dimen>
     <dimen name="divider_margin">15dp</dimen>
@@ -18,6 +19,7 @@
     <dimen name="show_habit_top_padding">10dp</dimen>
     <dimen name="show_habit_bottom_padding">10dp</dimen>
     <dimen name="show_habit_spacing_between_layouts">10dp</dimen>
+    <dimen name="show_habit_view_text">20sp</dimen>
 
     <dimen name="overview_padding">15dp</dimen>
 </resources>

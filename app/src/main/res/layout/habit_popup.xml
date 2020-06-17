@@ -6,7 +6,6 @@
     android:layout_height="fill_parent"
     android:layout_gravity="center"
     android:background="@color/dark_theme_background"
-    android:orientation="horizontal"
     android:padding="5dp">
 
     <RelativeLayout
@@ -167,12 +166,216 @@
                     android:text="@string/habit_popup_days"
                     android:textColor="@color/dark_theme_title"
                     android:textSize="@dimen/habit_pop_up_text" />
+
             </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/notification_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/habit_popup_notification"
+                    android:textColor="@color/dark_theme_title"
+                    android:textSize="@dimen/habit_pop_up_text" />
+
+                <Switch
+                    android:id="@+id/notification_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true" />
+
+                <TextView
+                    android:id="@+id/notification_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/notification_text"
+                    android:text="08:00"
+                    android:textColor="@color/dark_theme_title"
+                    android:textSize="@dimen/habit_pop_up_time" />
+
+                <LinearLayout
+                    android:id="@+id/notification_checkbox_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/notification_time"
+                    android:gravity="center_horizontal">
+
+                    <RelativeLayout
+                        android:id="@+id/notification_sunday_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="@dimen/habit_pop_up_checkbox_space">
+
+                        <TextView
+                            android:id="@+id/notification_sunday_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/calendar_sunday"
+                            android:textColor="@color/dark_theme_title" />
+
+                        <CheckBox
+                            android:id="@+id/notification_sunday_checkbox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/notification_sunday_text"
+                            android:buttonTint="@color/dark_theme_grey"
+                            android:checked="true" />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/notification_monday_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/notification_sunday_layout"
+                        android:paddingRight="@dimen/habit_pop_up_checkbox_space">
+
+                        <TextView
+                            android:id="@+id/notification_monday_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/calendar_monday"
+                            android:textColor="@color/dark_theme_title" />
+
+                        <CheckBox
+                            android:id="@+id/notification_monday_checkbox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/notification_monday_text"
+                            android:buttonTint="@color/dark_theme_grey"
+                            android:checked="true" />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/notification_tuesday_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/notification_monday_layout"
+                        android:paddingRight="@dimen/habit_pop_up_checkbox_space">
+
+                        <TextView
+                            android:id="@+id/notification_tuesday_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/calendar_tuesday"
+                            android:textColor="@color/dark_theme_title" />
+
+                        <CheckBox
+                            android:id="@+id/notification_tuesday_checkbox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/notification_tuesday_text"
+                            android:buttonTint="@color/dark_theme_grey"
+                            android:checked="true" />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/notification_wednesday_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/notification_tuesday_layout"
+                        android:paddingRight="@dimen/habit_pop_up_checkbox_space">
+
+                        <TextView
+                            android:id="@+id/notification_wednesday_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/calendar_wednesday"
+                            android:textColor="@color/dark_theme_title" />
+
+                        <CheckBox
+                            android:id="@+id/notification_wednesday_checkbox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/notification_wednesday_text"
+                            android:buttonTint="@color/dark_theme_grey"
+                            android:checked="true" />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/notification_thursday_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/notification_wednesday_layout"
+                        android:paddingRight="@dimen/habit_pop_up_checkbox_space">
+
+                        <TextView
+                            android:id="@+id/notification_thursday_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/calendar_thursday"
+                            android:textColor="@color/dark_theme_title" />
+
+                        <CheckBox
+                            android:id="@+id/notification_thursday_checkbox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/notification_thursday_text"
+                            android:buttonTint="@color/dark_theme_grey"
+                            android:checked="true" />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/notification_friday_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/notification_thursday_layout"
+                        android:paddingRight="@dimen/habit_pop_up_checkbox_space">
+
+                        <TextView
+                            android:id="@+id/notification_friday_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/calendar_friday"
+                            android:textColor="@color/dark_theme_title" />
+
+                        <CheckBox
+                            android:id="@+id/notification_friday_checkbox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/notification_friday_text"
+                            android:buttonTint="@color/dark_theme_grey"
+                            android:checked="true" />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/notification_saturday_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@id/notification_friday_layout">
+
+                        <TextView
+                            android:id="@+id/notification_saturday_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/calendar_saturday"
+                            android:textColor="@color/dark_theme_title" />
+
+                        <CheckBox
+                            android:id="@+id/notification_saturday_checkbox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/notification_saturday_text"
+                            android:buttonTint="@color/dark_theme_grey"
+                            android:checked="true" />
+
+                    </RelativeLayout>
+                </LinearLayout>
+
+            </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingTop="0dp"
+                android:paddingTop="15dp"
                 android:paddingBottom="15dp">
 
                 <TextView

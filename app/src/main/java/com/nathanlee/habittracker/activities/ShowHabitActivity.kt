@@ -1,10 +1,17 @@
 package com.nathanlee.habittracker.activities
 
+import android.app.AlarmManager
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.LinearLayout
@@ -17,12 +24,12 @@ import com.nathanlee.habittracker.components.CalendarView
 import com.nathanlee.habittracker.components.HabitManager
 import com.nathanlee.habittracker.components.HabitManager.Companion.habitList
 import com.nathanlee.habittracker.components.HabitManager.Companion.todayDate
+import com.nathanlee.habittracker.components.ReminderBroadcast
 import com.nathanlee.habittracker.components.StreakChartView
 import com.nathanlee.habittracker.models.Habit
 import components.ColourManager
-
-//TODO: Add an overview section
-//TODO: Notifications
+import java.text.SimpleDateFormat
+import java.util.*
 
 class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
     private lateinit var habit: Habit
@@ -69,6 +76,14 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
                 baseContext
             )
             actionBar!!.title = habit.name
+        } else if (intent.hasExtra("notificationHabitIndex")) {
+            habitIndex = intent.extras!!.getInt("notificationHabitIndex")
+            habit = habitList[habitIndex]
+            habitColour = ColourManager.selectColour(
+                habitList[habitIndex].colour,
+                baseContext
+            )
+            actionBar!!.title = habit.name
         }
 
         layout = findViewById(R.id.chart_layout)
@@ -79,39 +94,82 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
         var overviewTextColour = ContextCompat.getColor(baseContext, R.color.dark_theme_title)
 
         firstDayText = findViewById(R.id.overview_first_day)
-        var firstCompletion = if (habit.streaks.streaks.isEmpty()){
+        var firstCompletion = if (habit.streaks.streaks.isEmpty()) {
             "Not started"
         } else {
-            "${habit.streaks.streaks[0].start.toString()}"
+            habit.streaks.streaks[0].start.toString()
         }
         var firstDayStringValue = SpannableString(firstCompletion)
-        firstDayStringValue.setSpan(ForegroundColorSpan(habitColour), 0, firstDayStringValue.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
+        firstDayStringValue.setSpan(
+            ForegroundColorSpan(habitColour),
+            0,
+            firstDayStringValue.length,
+            SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
         firstDayString = SpannableString(getString(R.string.show_habit_first_day))
-        firstDayString.setSpan(overviewTextColour, 0, firstDayString.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
+        firstDayString.setSpan(
+            overviewTextColour,
+            0,
+            firstDayString.length,
+            SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
         firstDayText.text = firstDayStringValue
         firstDayText.append(firstDayString)
 
         totalText = findViewById(R.id.overview_total)
         var totalStringValue = SpannableString("${habit.completions.total}")
-        totalStringValue.setSpan(ForegroundColorSpan(habitColour), 0, totalStringValue.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
+        totalStringValue.setSpan(
+            ForegroundColorSpan(habitColour),
+            0,
+            totalStringValue.length,
+            SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
         totalString = SpannableString(getString(R.string.show_habit_total))
-        totalString.setSpan(overviewTextColour, 0, totalString.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
+        totalString.setSpan(
+            overviewTextColour,
+            0,
+            totalString.length,
+            SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
         totalText.setText(totalStringValue, TextView.BufferType.SPANNABLE)
         totalText.append(totalString)
 
         frequencyText = findViewById(R.id.overview_frequency)
-        var frequencyString = SpannableString("${habit.numerator} time(s) in ${habit.denominator} day(s)")
-        frequencyString.setSpan(ForegroundColorSpan(habitColour), 0, frequencyString.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
+        var frequencyString =
+            SpannableString("${habit.numerator} time(s) in ${habit.denominator} day(s)")
+        frequencyString.setSpan(
+            ForegroundColorSpan(habitColour),
+            0,
+            frequencyString.length,
+            SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
         repeatString = SpannableString(getString(R.string.show_habit_repeat))
-        repeatString.setSpan(overviewTextColour, 0, repeatString.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
+        repeatString.setSpan(
+            overviewTextColour,
+            0,
+            repeatString.length,
+            SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
         frequencyText.setText(frequencyString, TextView.BufferType.SPANNABLE)
         frequencyText.append(repeatString)
 
-        notificationText= findViewById(R.id.overview_notification)
-        var notificationStringValue = SpannableString("${habit.completions.total}")
-        notificationStringValue.setSpan(ForegroundColorSpan(habitColour), 0, notificationStringValue.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
+        notificationText = findViewById(R.id.overview_notification)
+
+        var notificationStringValue = SpannableString(getNotificationString())
+        notificationStringValue.setSpan(
+            ForegroundColorSpan(habitColour),
+            0,
+            notificationStringValue.length,
+            SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
         notificationString = SpannableString(getString(R.string.show_habit_notification))
-        notificationString.setSpan(overviewTextColour, 0, notificationString.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
+        notificationString.setSpan(
+            overviewTextColour,
+            0,
+            notificationString.length,
+            SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
         notificationText.setText(notificationStringValue, TextView.BufferType.SPANNABLE)
         notificationText.append(notificationString)
 
@@ -130,6 +188,7 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
         streakText = findViewById(R.id.streak_text)
         streakText.setTextColor(habitColour)
 
+        createNotificationChannel()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -164,7 +223,10 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
             habit.description,
             habit.colour,
             habit.numerator,
-            habit.denominator
+            habit.denominator,
+            habit.notification,
+            habit.notificationTime,
+            habit.notificationDays
         )
         habitList[habitIndex].updatePeriodCompletions(habitList[habitIndex].completions.completions.first().timestamp)
         habitList[habitIndex].updatePeriodStreak(habitList[habitIndex].completions.completions.first().timestamp)
@@ -186,7 +248,7 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
     Opens the dialog to create a new habit
      */
     private fun openHabitDialog() {
-        var newDialog = HabitDialog(false, habit)
+        var newDialog = HabitDialog(false, habitIndex, this)
         newDialog.show(supportFragmentManager, "Show models.Habit")
     }
 
@@ -199,14 +261,25 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
         overviewText.setTextColor(habitColour)
 
         frequencyText = findViewById(R.id.overview_frequency)
-        var frequencyString = SpannableString("${habit.numerator} time(s) in ${habit.denominator} day(s)")
-        frequencyString.setSpan(ForegroundColorSpan(habitColour), 0, frequencyString.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
+        var frequencyString =
+            SpannableString("${habit.numerator} time(s) in ${habit.denominator} day(s)")
+        frequencyString.setSpan(
+            ForegroundColorSpan(habitColour),
+            0,
+            frequencyString.length,
+            SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
         frequencyText.setText(frequencyString, TextView.BufferType.SPANNABLE)
         frequencyText.append(repeatString)
 
-        notificationText= findViewById(R.id.overview_notification)
-        var notificationStringValue = SpannableString("${habit.completions.total}")
-        notificationStringValue.setSpan(ForegroundColorSpan(habitColour), 0, notificationStringValue.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
+        notificationText = findViewById(R.id.overview_notification)
+        var notificationStringValue = SpannableString(getNotificationString())
+        notificationStringValue.setSpan(
+            ForegroundColorSpan(habitColour),
+            0,
+            notificationStringValue.length,
+            SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
         notificationText.setText(notificationStringValue, TextView.BufferType.SPANNABLE)
         notificationText.append(notificationString)
 
@@ -218,19 +291,29 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
 
     fun updateCompletionText() {
         firstDayText = findViewById(R.id.overview_first_day)
-        var firstCompletion = if (habit.streaks.streaks.isEmpty()){
+        var firstCompletion = if (habit.streaks.streaks.isEmpty()) {
             "Not started"
         } else {
-            "${habit.streaks.streaks[0].start.toString()}"
+            habit.streaks.streaks[0].start.toString()
         }
         var firstDayStringValue = SpannableString(firstCompletion)
-        firstDayStringValue.setSpan(ForegroundColorSpan(habitColour), 0, firstDayStringValue.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
+        firstDayStringValue.setSpan(
+            ForegroundColorSpan(habitColour),
+            0,
+            firstDayStringValue.length,
+            SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
         firstDayText.text = firstDayStringValue
         firstDayText.append(firstDayString)
 
         totalText = findViewById(R.id.overview_total)
         var totalStringValue = SpannableString("${habit.completions.total}")
-        totalStringValue.setSpan(ForegroundColorSpan(habitColour), 0, totalStringValue.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
+        totalStringValue.setSpan(
+            ForegroundColorSpan(habitColour),
+            0,
+            totalStringValue.length,
+            SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
         totalText.setText(totalStringValue, TextView.BufferType.SPANNABLE)
         totalText.append(totalString)
 
@@ -238,7 +321,36 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
         streakChartView.updateGraph(layout)
     }
 
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            var name: CharSequence = "HabitNotificationChannel"
+            var description = "Channel for Habit reminder"
+            var importance = NotificationManager.IMPORTANCE_DEFAULT
+            var channel = NotificationChannel("habitReminder", name, importance)
+            channel.description = description
+
+            var notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
     fun delete() {
+        for (i in habitList[habitIndex].notificationDays.indices) {
+            if (habitList[habitIndex].notificationDays[i]) {
+                var alarmManager =
+                    this!!.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                var alarmIntent = Intent(this, ReminderBroadcast::class.java)
+                var pendingIntent =
+                    PendingIntent.getBroadcast(applicationContext, habit.id + i, alarmIntent, 0)
+                if (pendingIntent != null) {
+                    alarmManager.cancel(pendingIntent)
+                    Log.e("Show Habit:", "Deleted intent")
+                }
+            }
+        }
+
         if (!HabitManager.editLock) {
             HabitManager.editLock = true
             habitList.removeAt(habitIndex)
@@ -248,5 +360,128 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
 
         var startIntent = Intent(applicationContext, MainActivity::class.java)
         startActivity(startIntent)
+    }
+
+    /*
+    fun notificationTest(){
+        var alarmManager =
+            getSystemService(ALARM_SERVICE) as AlarmManager
+        var alarmIntent = Intent(this, ReminderBroadcast::class.java).apply {
+
+        }
+
+        var pendingIntent =
+            PendingIntent.getBroadcast(applicationContext, habit.id + i, alarmIntent, 0)
+
+        if (pendingIntent != null) {
+            alarmManager.cancel(pendingIntent)
+        }
+
+        alarmManager.setRepeating(
+            AlarmManager.RTC_WAKEUP,
+            System.currentTimeMillis() + 3000,
+            AlarmManager.INTERVAL_FIFTEEN_MINUTES,
+            pendingIntent
+        )
+    }
+
+     */
+
+    fun notificationPopUp(
+        notification: Boolean,
+        notificationDays: BooleanArray,
+        notificationTime: String
+    ) {
+
+        var alarmManager =
+            getSystemService(ALARM_SERVICE) as AlarmManager
+        var alarmIntent = Intent(this, ReminderBroadcast::class.java).apply {
+            putExtra("notificationHabitIndex", habitIndex)
+            addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        }
+
+        if (notification) {
+            for (i in notificationDays.indices) {
+
+                var pendingIntent =
+                    PendingIntent.getBroadcast(applicationContext, habit.id + i, alarmIntent, 0)
+
+                if (pendingIntent != null) {
+                    alarmManager.cancel(pendingIntent)
+                }
+
+                if (notificationDays[i]) {
+                    val dateFormat = SimpleDateFormat("HH:mm")
+                    var dateObject = dateFormat.parse(notificationTime)
+                    var dateHour = notificationTime.substring(0, 2).toInt()
+                    var dateMinute = notificationTime.substring(3, 5).toInt()
+
+                    var calendar = Calendar.getInstance().apply {
+                        set(Calendar.DAY_OF_WEEK, i + 1)
+                        set(Calendar.HOUR_OF_DAY, dateHour)
+                        set(Calendar.MINUTE, dateMinute)
+                    }
+
+                    Log.d("Date", calendar.time.toString())
+
+                    alarmManager.setInexactRepeating(
+                        AlarmManager.RTC_WAKEUP,
+                        calendar.timeInMillis,
+                        AlarmManager.INTERVAL_DAY * 7,
+                        pendingIntent
+                    )
+
+                }
+            }
+        } else {
+            for (i in notificationDays.indices) {
+                if (notificationDays[i]) {
+                    var pendingIntent =
+                        PendingIntent.getBroadcast(applicationContext, habit.id + i, alarmIntent, 0)
+                    if (pendingIntent != null) {
+                        alarmManager.cancel(pendingIntent)
+                    }
+                }
+            }
+        }
+    }
+
+    fun getNotificationString(): String{
+        var firstItem = true
+        var notifString = ""
+        var count = 0
+        for (i in habit.notificationDays.indices) {
+            if (habit.notificationDays[i]) {
+                when (i) {
+                    0 -> notifString += getString(R.string.sunday)
+                    1 -> notifString += getString(R.string.monday)
+                    2 -> notifString += getString(R.string.tuesday)
+                    3 -> notifString += getString(R.string.wednesday)
+                    4 -> notifString += getString(R.string.thursday)
+                    5 -> notifString += getString(R.string.friday)
+                    6 -> notifString += getString(R.string.saturday)
+                }
+                if (firstItem) {
+                    firstItem = false
+                } else {
+                    notifString += ", "
+                }
+                count++
+            }
+        }
+
+        if (count == 1) {
+            notifString = notifString.substring(0, notifString.length - 1)
+        } else if (count == 0) {
+            notifString = "Off"
+        }
+
+        if (count == 7) {
+            notifString = getString(R.string.everyday)
+        }
+
+        notifString += " at " + habit.notificationTime
+
+        return notifString
     }
 }

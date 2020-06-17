@@ -5,8 +5,6 @@ import CompletionList
 import Streak
 import StreakList
 import Timestamp
-import android.os.Parcel
-import android.os.Parcelable
 import kotlin.math.abs
 
 class Habit(
@@ -14,19 +12,15 @@ class Habit(
     var description: String,
     var colour: String,
     var numerator: Int,
-    var denominator: Int
-) : Parcelable {
+    var denominator: Int,
+    var id: Int,
+    var notification: Boolean,
+    var notificationTime: String,
+    var notificationDays: BooleanArray
+) {
 
     var completions: CompletionList = CompletionList()
     var streaks: StreakList = StreakList()
-
-    constructor(parcel: Parcel) : this(
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readInt(),
-        parcel.readInt()
-    )
 
     /*
     Given a date, update the streak and completion status
@@ -334,7 +328,10 @@ class Habit(
         description: String,
         colour: String,
         numerator: Int,
-        denominator: Int
+        denominator: Int,
+        notification: Boolean,
+        notificationTime: String,
+        notificationDays: BooleanArray
     ) {
         this.name = name
         this.description = description
@@ -345,27 +342,8 @@ class Habit(
             this.numerator = 1
             this.denominator = 1
         }
-    }
-
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(name)
-        parcel.writeString(description)
-        parcel.writeString(colour)
-        parcel.writeInt(numerator)
-        parcel.writeInt(denominator)
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
-    companion object CREATOR : Parcelable.Creator<Habit> {
-        override fun createFromParcel(parcel: Parcel): Habit {
-            return Habit(parcel)
-        }
-
-        override fun newArray(size: Int): Array<Habit?> {
-            return arrayOfNulls(size)
-        }
+        this.notification = notification
+        this.notificationTime = notificationTime
+        this.notificationDays = notificationDays
     }
 }

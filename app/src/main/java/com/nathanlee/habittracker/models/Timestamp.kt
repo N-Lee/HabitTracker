@@ -148,6 +148,23 @@ data class Timestamp(var date: String) {
     }
 
     /*
+    To get the day of week when changing Calendar objects
+     */
+    fun getCalendarDayOfWeekIndex(day: Timestamp): Int {
+        val dayString = getDayOfWeek(day)
+        var dayInt = 7 // 1 = Monday ... 7 = Sunday
+        when (dayString) {
+            "Mon" -> dayInt = 1
+            "Tue" -> dayInt = 2
+            "Wed" -> dayInt = 3
+            "Thu" -> dayInt = 4
+            "Fri" -> dayInt = 5
+            "Sat" -> dayInt = 6
+        }
+        return dayInt
+    }
+
+    /*
     Add "number" amount of days and returns the date
      */
     fun getDaysAfter(number: Int): Timestamp {

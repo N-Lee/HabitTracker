@@ -3,22 +3,27 @@ package com.nathanlee.habittracker.activities
 import Completion
 import ReadWriteJson
 import Timestamp
-import android.annotation.SuppressLint
-import android.app.Dialog
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.Point
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.nathanlee.habittracker.R
 import com.nathanlee.habittracker.components.HabitManager.Companion.editLock
 import com.nathanlee.habittracker.components.HabitManager.Companion.habitList
+import com.nathanlee.habittracker.components.HabitManager.Companion.managerDate
+import com.nathanlee.habittracker.components.HabitManager.Companion.nextId
 import com.nathanlee.habittracker.components.HabitManager.Companion.rw
+import com.nathanlee.habittracker.components.HabitManager.Companion.simpleDate
+import com.nathanlee.habittracker.components.HabitManager.Companion.todayDate
 import com.nathanlee.habittracker.components.HorizontalScroll
+import com.nathanlee.habittracker.components.ReminderBroadcast
 import com.nathanlee.habittracker.components.VerticalScroll
 import com.nathanlee.habittracker.models.Habit
 import components.ColourManager
@@ -31,10 +36,6 @@ import kotlin.math.floor
 
 class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
     VerticalScroll.ScrollViewListener, HorizontalScroll.ScrollViewListener {
-
-    private val DATE = Date()
-    private val SIMPLE_DATE = SimpleDateFormat("dd/MM/yyyy").format(DATE)
-    private val TIMESTAMP = Timestamp(SIMPLE_DATE)
 
     private val NUMBER_OF_DATES = 12
 
@@ -81,15 +82,21 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
     private lateinit var editHabitListener: View.OnClickListener
     private lateinit var editStatusListener: View.OnClickListener
 
-    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(com.nathanlee.habittracker.R.layout.activity_main)
 
         val actionBar = supportActionBar
         actionBar!!.title = "Habit"
-        actionBar!!.elevation = 0f
-        actionBar!!.setBackgroundDrawable(ColorDrawable(ContextCompat.getColor(baseContext, R.color.dark_theme_actionbar)))
+        actionBar.elevation = 0f
+        actionBar.setBackgroundDrawable(
+            ColorDrawable(
+                ContextCompat.getColor(
+                    baseContext,
+                    com.nathanlee.habittracker.R.color.dark_theme_actionbar
+                )
+            )
+        )
 
         habitDialog = Dialog(this)
 
@@ -120,7 +127,7 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
                     view.setBackgroundColor(
                         ContextCompat.getColor(
                             applicationContext,
-                            R.color.dark_theme_table_background
+                            com.nathanlee.habittracker.R.color.dark_theme_table_background
                         )
                     )
                 } else {
@@ -138,7 +145,7 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
             }
         }
 
-        mainRelativeLayout = findViewById(R.id.main_relative_layout)
+        mainRelativeLayout = findViewById(com.nathanlee.habittracker.R.id.main_relative_layout)
         getDimension()
         initializeRelativeLayout()
         initializeScroll()
@@ -159,6 +166,8 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
                 addCellToTable(i, j, habitList[i])
             }
         }
+
+        //createNotificationChannel()
 
         tableHorizontalScrollView.viewTreeObserver
             .addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
@@ -209,23 +218,31 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
 
         columnHeaderHorizontalScrollView.setOnTouchListener(onTouchListener)
         tableHorizontalScrollView.setOnTouchListener(onTouchListener)
+        loadData()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        managerDate = Date()
+        simpleDate = SimpleDateFormat("dd/MM/yyyy").format(managerDate)
+        todayDate = Timestamp(simpleDate)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.main, menu)
+        menuInflater.inflate(com.nathanlee.habittracker.R.menu.main, menu)
 
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.add_habit_app_bar -> {
+            com.nathanlee.habittracker.R.id.add_habit_app_bar -> {
                 openHabitDialog()
             }
 
-            R.id.settings_app_bar -> {
+            com.nathanlee.habittracker.R.id.settings_app_bar -> {
                 var startIntent = Intent(applicationContext, SettingsActivity::class.java)
-                startIntent.putExtra("SOMETHING", "Text has changed")
                 startActivity(startIntent)
             }
         }
@@ -251,6 +268,8 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
 
         habitList.add(habit)
         rw.write(habitList)
+        nextId += 10
+        saveData()
     }
 
     override fun onScrollChanged(
@@ -284,7 +303,7 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
     Opens the dialog to create a new habit
      */
     private fun openHabitDialog() {
-        var newDialog = HabitDialog(true)
+        var newDialog = HabitDialog(true, habitList.size, this)
         newDialog.show(supportFragmentManager, "Show models.Habit")
     }
 
@@ -320,20 +339,20 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
             RelativeLayout.LayoutParams(rightRelativeLayoutWidth, bottomRelativeLayoutHeight)
 
         headerRelativeLayout = RelativeLayout(applicationContext)
-        headerRelativeLayout.id = R.id.header_relative_layout
+        headerRelativeLayout.id = com.nathanlee.habittracker.R.id.header_relative_layout
         headerRelativeLayout.setPadding(0, 0, 0, 0)
 
         columnHeaderRelativeLayout = RelativeLayout(applicationContext)
         columnHeaderRelativeLayout.id =
-            R.id.column_header_relative_layout
+            com.nathanlee.habittracker.R.id.column_header_relative_layout
         columnHeaderRelativeLayout.setPadding(0, 0, 0, 0)
 
         rowHeaderRelativeLayout = RelativeLayout(applicationContext)
-        rowHeaderRelativeLayout.id = R.id.row_header_relative_layout
+        rowHeaderRelativeLayout.id = com.nathanlee.habittracker.R.id.row_header_relative_layout
         rowHeaderRelativeLayout.setPadding(0, 0, 0, 0)
 
         tableRelativeLayout = RelativeLayout(applicationContext)
-        tableRelativeLayout.id = R.id.table_relative_layout
+        tableRelativeLayout.id = com.nathanlee.habittracker.R.id.table_relative_layout
         tableRelativeLayout.setPadding(0, 0, 0, 0)
 
         headerRelativeLayout.layoutParams =
@@ -343,7 +362,7 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
 
         layoutParamsColumnHeaderLayout.addRule(
             RelativeLayout.RIGHT_OF,
-            R.id.header_relative_layout
+            com.nathanlee.habittracker.R.id.header_relative_layout
         )
         columnHeaderRelativeLayout.layoutParams = layoutParamsColumnHeaderLayout
         this.mainRelativeLayout.addView(columnHeaderRelativeLayout)
@@ -351,18 +370,18 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
 
         layoutParamsRowHeaderLayout.addRule(
             RelativeLayout.BELOW,
-            R.id.header_relative_layout
+            com.nathanlee.habittracker.R.id.header_relative_layout
         )
         rowHeaderRelativeLayout.layoutParams = layoutParamsRowHeaderLayout
         this.mainRelativeLayout.addView(rowHeaderRelativeLayout)
 
         layoutParamsTableLayout.addRule(
             RelativeLayout.BELOW,
-            R.id.column_header_relative_layout
+            com.nathanlee.habittracker.R.id.column_header_relative_layout
         )
         layoutParamsTableLayout.addRule(
             RelativeLayout.RIGHT_OF,
-            R.id.row_header_relative_layout
+            com.nathanlee.habittracker.R.id.row_header_relative_layout
         )
         tableRelativeLayout.layoutParams = layoutParamsTableLayout
         this.mainRelativeLayout.addView(tableRelativeLayout)
@@ -447,7 +466,7 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
 
         columnHeaderTableLayout = TableLayout(applicationContext)
         columnHeaderTableLayout.setPadding(0, 0, 0, 0)
-        columnHeaderTableLayout.id = R.id.column_header_table_layout
+        columnHeaderTableLayout.id = com.nathanlee.habittracker.R.id.column_header_table_layout
 
         rowHeaderTableLayout = TableLayout(applicationContext)
         rowHeaderTableLayout.setPadding(0, 0, 0, 0)
@@ -459,7 +478,7 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         headerTableLayout.setBackgroundColor(
             ContextCompat.getColor(
                 applicationContext,
-                R.color.dark_theme_background
+                com.nathanlee.habittracker.R.color.dark_theme_background
             )
         )
         this.headerRelativeLayout.addView(headerTableLayout)
@@ -468,7 +487,7 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         columnHeaderTableLayout.setBackgroundColor(
             ContextCompat.getColor(
                 applicationContext,
-                R.color.dark_theme_background
+                com.nathanlee.habittracker.R.color.dark_theme_background
             )
         )
         this.columnHeaderHorizontalScrollView.addView(columnHeaderTableLayout)
@@ -487,7 +506,7 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         val tableName = TextView(applicationContext)
 
         tableName.textSize =
-            resources.getDimension(R.dimen.cell_text_size)
+            resources.getDimension(com.nathanlee.habittracker.R.dimen.cell_text_size)
 
         tableRow = TableRow(applicationContext)
         tableRow.layoutParams = layoutParamsTableRow
@@ -504,7 +523,7 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         this.columnHeaderTableLayout.addView(tableRowB)
 
         for (i in 0..NUMBER_OF_DATES) {
-            val wantedDate = TIMESTAMP.getDaysBefore(NUMBER_OF_DATES - i)
+            val wantedDate = todayDate.getDaysBefore(NUMBER_OF_DATES - i)
             val weekday = wantedDate.getDayOfWeek(wantedDate)
             val today = wantedDate.dayInt
 
@@ -531,7 +550,7 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         HEADER_TEXT_VIEW.text = text
         HEADER_TEXT_VIEW.gravity = Gravity.CENTER_HORIZONTAL or Gravity.CENTER_VERTICAL
         HEADER_TEXT_VIEW.textSize =
-            resources.getDimension(R.dimen.header_cell_text_size)
+            resources.getDimension(com.nathanlee.habittracker.R.dimen.header_cell_text_size)
 
         newTableRow.addView(HEADER_TEXT_VIEW)
         newTableRow.tag = id
@@ -559,16 +578,16 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         newTableRow.setBackgroundColor(
             ContextCompat.getColor(
                 applicationContext,
-                R.color.dark_theme_table_background
+                com.nathanlee.habittracker.R.color.dark_theme_table_background
             )
         )
         newTableRow.setPadding(3, 3, 3, 4)
         newTableRow.layoutParams = layoutParamsTableRow1
 
-        headerName.setPadding(20,0,0,0)
+        headerName.setPadding(20, 0, 0, 0)
         headerName.text = habit.name
         headerName.textSize =
-            resources.getDimension(R.dimen.cell_text_size)
+            resources.getDimension(com.nathanlee.habittracker.R.dimen.cell_text_size)
         headerName.setTextColor(
             ColourManager.selectColour(
                 habit.colour,
@@ -637,7 +656,7 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
             tableRow.setBackgroundColor(
                 ContextCompat.getColor(
                     applicationContext,
-                    R.color.dark_theme_table_background
+                    com.nathanlee.habittracker.R.color.dark_theme_table_background
                 )
             )
         }
@@ -662,10 +681,10 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
                 if (thisCompletionList.find(
                         0,
                         thisCompletionList.completions.size - 1,
-                        TIMESTAMP
+                        todayDate
                     ) == -1
                 ) {
-                    val newCompletion = Completion(TIMESTAMP)
+                    val newCompletion = Completion(todayDate)
                     habitList[i].completions.edit(newCompletion, 1)
                 }
             }
@@ -706,4 +725,94 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         }
     }
 
+    private fun saveData() {
+        val sharedPreferences = getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putInt("habitID", nextId)
+        editor.apply()
+    }
+
+    /*
+    Loads Shared Preferences
+     */
+    private fun loadData() {
+        val sharedPreferences = getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
+        nextId = sharedPreferences.getInt("habitID", 0)
+    }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            var name: CharSequence = "HabitNotificationChannel"
+            var description = "Channel for Habit reminder"
+            var importance = NotificationManager.IMPORTANCE_DEFAULT
+            var channel = NotificationChannel("habitReminder", name, importance)
+            channel.description = description
+
+            var notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    fun notificationPopUp(
+        notification: Boolean,
+        notificationDays: BooleanArray,
+        notificationTime: String,
+        habitIndex: Int
+    ) {
+
+        var habit = habitList[habitIndex]
+        var alarmManager =
+            getSystemService(ALARM_SERVICE) as AlarmManager
+        var alarmIntent = Intent(this, ReminderBroadcast::class.java).apply {
+            putExtra("notificationHabitIndex", habitIndex)
+            addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        }
+
+        if (notification) {
+            for (i in notificationDays.indices) {
+
+                var pendingIntent =
+                    PendingIntent.getBroadcast(applicationContext, habit.id + i, alarmIntent, 0)
+
+                if (pendingIntent != null) {
+                    alarmManager.cancel(pendingIntent)
+                }
+
+                if (notificationDays[i]) {
+                    val dateFormat = SimpleDateFormat("HH:mm")
+                    var dateObject = dateFormat.parse(notificationTime)
+                    var dateHour = notificationTime.substring(0, 2).toInt()
+                    var dateMinute = notificationTime.substring(3, 5).toInt()
+
+                    var calendar = Calendar.getInstance().apply {
+                        set(Calendar.DAY_OF_WEEK, i + 1)
+                        set(Calendar.HOUR_OF_DAY, dateHour)
+                        set(Calendar.MINUTE, dateMinute)
+                    }
+
+                    Log.d("Date", calendar.time.toString())
+
+                    alarmManager.setInexactRepeating(
+                        AlarmManager.RTC_WAKEUP,
+                        calendar.timeInMillis,
+                        AlarmManager.INTERVAL_DAY * 7,
+                        pendingIntent
+                    )
+
+                }
+            }
+        } else {
+            for (i in notificationDays.indices) {
+                if (notificationDays[i]) {
+                    var pendingIntent =
+                        PendingIntent.getBroadcast(applicationContext, habit.id + i, alarmIntent, 0)
+                    if (pendingIntent != null) {
+                        alarmManager.cancel(pendingIntent)
+                    }
+                }
+            }
+        }
+    }
 }
