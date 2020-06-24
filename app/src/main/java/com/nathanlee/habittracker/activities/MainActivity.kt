@@ -1,7 +1,6 @@
 package com.nathanlee.habittracker.activities
 
 import Completion
-import ReadWriteJson
 import Timestamp
 import android.app.*
 import android.content.Context
@@ -10,7 +9,6 @@ import android.graphics.Point
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -156,8 +154,6 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         tableScrollView.setScrollViewListener(this)
         createHeader()
         initializeColumnHeaderTable()
-        initializeHabits()
-
         createEmptyRow()
         for (i in 0 until habitList.size) {
             initializeRowForTable(i)
@@ -167,7 +163,7 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
             }
         }
 
-        //createNotificationChannel()
+        createNotificationChannel()
 
         tableHorizontalScrollView.viewTreeObserver
             .addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
@@ -668,33 +664,6 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
     }
 
     /*
-    Reads the json file where habits are saved if it exists
-     */
-    private fun initializeHabits() {
-        rw = ReadWriteJson(filesDir.toString())
-
-        if (rw.exists()) {
-            habitList = rw.read()
-
-            for (i in 0 until habitList.size) {
-                val thisCompletionList = habitList[i].completions
-                if (thisCompletionList.find(
-                        0,
-                        thisCompletionList.completions.size - 1,
-                        todayDate
-                    ) == -1
-                ) {
-                    val newCompletion = Completion(todayDate)
-                    habitList[i].completions.edit(newCompletion, 1)
-                }
-            }
-        } else {
-            habitList = mutableListOf()
-            rw.write(habitList)
-        }
-    }
-
-    /*
     Creates a blank row
      */
     private fun createEmptyRow() {
@@ -740,6 +709,9 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         nextId = sharedPreferences.getInt("habitID", 0)
     }
 
+    /*
+    Creates a notification channel if the device OS is above Oreo
+     */
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             var name: CharSequence = "HabitNotificationChannel"
@@ -755,6 +727,9 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         }
     }
 
+    /*
+    Sets up notification for the newly created habit
+     */
     fun notificationPopUp(
         notification: Boolean,
         notificationDays: BooleanArray,
@@ -781,18 +756,17 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
                 }
 
                 if (notificationDays[i]) {
-                    val dateFormat = SimpleDateFormat("HH:mm")
-                    var dateObject = dateFormat.parse(notificationTime)
                     var dateHour = notificationTime.substring(0, 2).toInt()
                     var dateMinute = notificationTime.substring(3, 5).toInt()
 
                     var calendar = Calendar.getInstance().apply {
-                        set(Calendar.DAY_OF_WEEK, i + 1)
                         set(Calendar.HOUR_OF_DAY, dateHour)
                         set(Calendar.MINUTE, dateMinute)
                     }
 
-                    Log.d("Date", calendar.time.toString())
+                    while (calendar.get(Calendar.DAY_OF_WEEK) != i + 1) {
+                        calendar.add(Calendar.DATE, 1)
+                    }
 
                     alarmManager.setInexactRepeating(
                         AlarmManager.RTC_WAKEUP,

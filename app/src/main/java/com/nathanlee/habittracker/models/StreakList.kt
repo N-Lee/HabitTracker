@@ -36,8 +36,6 @@ class StreakList {
             streaks[firstIndex].end = second.end
             streaks.removeAt(secondIndex)
 
-        } else {
-            //TODO: Decide if I want a message here
         }
     }
 

@@ -11,7 +11,6 @@ import android.os.Build
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.LinearLayout
@@ -19,16 +18,13 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.charts.PieChart
 import com.nathanlee.habittracker.R
-import com.nathanlee.habittracker.components.CalendarView
-import com.nathanlee.habittracker.components.HabitManager
+import com.nathanlee.habittracker.components.*
 import com.nathanlee.habittracker.components.HabitManager.Companion.habitList
 import com.nathanlee.habittracker.components.HabitManager.Companion.todayDate
-import com.nathanlee.habittracker.components.ReminderBroadcast
-import com.nathanlee.habittracker.components.StreakChartView
 import com.nathanlee.habittracker.models.Habit
 import components.ColourManager
-import java.text.SimpleDateFormat
 import java.util.*
 
 class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
@@ -37,7 +33,9 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
     private var habitIndex = 0
     private lateinit var calendarView: CalendarView
     private lateinit var streakChartView: StreakChartView
-    private lateinit var layout: LinearLayout
+    private lateinit var completionRateChartView: CompletionRateChartView
+    private lateinit var streakLayout: LinearLayout
+    private lateinit var completeRateLayout: LinearLayout
     private lateinit var overviewText: TextView
     private lateinit var firstDayText: TextView
     private lateinit var totalText: TextView
@@ -45,6 +43,7 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
     private lateinit var notificationText: TextView
     private lateinit var calendarText: TextView
     private lateinit var streakText: TextView
+    private lateinit var completionRateText: TextView
 
     private lateinit var firstDayString: SpannableString
     private lateinit var totalString: SpannableString
@@ -76,8 +75,8 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
                 baseContext
             )
             actionBar!!.title = habit.name
-        } else if (intent.hasExtra("notificationHabitIndex")) {
-            habitIndex = intent.extras!!.getInt("notificationHabitIndex")
+        } else if (intent.hasExtra("openNotification")) {
+            habitIndex = intent.extras!!.getInt("openNotification")
             habit = habitList[habitIndex]
             habitColour = ColourManager.selectColour(
                 habitList[habitIndex].colour,
@@ -86,7 +85,8 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
             actionBar!!.title = habit.name
         }
 
-        layout = findViewById(R.id.chart_layout)
+        streakLayout = findViewById(R.id.chart_layout)
+        completeRateLayout = findViewById(R.id.completion_rate_chart_layout)
 
         overviewText = findViewById(R.id.overview_text)
         overviewText.setTextColor(habitColour)
@@ -181,12 +181,19 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
         calendarText = findViewById(R.id.history_text)
         calendarText.setTextColor(habitColour)
 
-        val chart: BarChart = findViewById(R.id.streak_chart)
-        streakChartView = StreakChartView(habitIndex, chart, this@ShowHabitActivity)
-        streakChartView.createGraph(layout)
+        val barChart: BarChart = findViewById(R.id.streak_chart)
+        streakChartView = StreakChartView(habitIndex, barChart, this@ShowHabitActivity)
+        streakChartView.createGraph(streakLayout)
 
         streakText = findViewById(R.id.streak_text)
         streakText.setTextColor(habitColour)
+
+        val pieChart: PieChart = findViewById(R.id.completion_rate_chart)
+        completionRateChartView = CompletionRateChartView(habitIndex, pieChart, this@ShowHabitActivity)
+        completionRateChartView.createGraph(completeRateLayout)
+
+        completionRateText = findViewById(R.id.completion_rate_text)
+        completionRateText.setTextColor(habitColour)
 
         createNotificationChannel()
     }
@@ -252,11 +259,17 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
         newDialog.show(supportFragmentManager, "Show models.Habit")
     }
 
+    /*
+    Opens the dialog to delete habit
+     */
     private fun openConfirmationDialog() {
         var newDialog = ConfirmationDialog(this)
         newDialog.show(supportFragmentManager, "Show models.Habit")
     }
 
+    /*
+    Updates the page when any changes are made to the habit
+     */
     private fun updateStats() {
         overviewText.setTextColor(habitColour)
 
@@ -285,10 +298,14 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
 
         calendarText.setTextColor(habitColour)
         streakText.setTextColor(habitColour)
+        completionRateText.setTextColor(habitColour)
 
         updateCompletionText()
     }
 
+    /*
+    Updates the overview tab's texts when calendar is update
+     */
     fun updateCompletionText() {
         firstDayText = findViewById(R.id.overview_first_day)
         var firstCompletion = if (habit.streaks.streaks.isEmpty()) {
@@ -318,9 +335,15 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
         totalText.append(totalString)
 
         streakChartView.refreshColour()
-        streakChartView.updateGraph(layout)
+        streakChartView.updateGraph(streakLayout)
+
+        completionRateChartView.refreshColour()
+        completionRateChartView.createGraph(completeRateLayout)
     }
 
+    /*
+    Creates notification channel for devices with Oreo and above
+     */
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             var name: CharSequence = "HabitNotificationChannel"
@@ -336,6 +359,9 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
         }
     }
 
+    /*
+    Deletes habit
+     */
     fun delete() {
         for (i in habitList[habitIndex].notificationDays.indices) {
             if (habitList[habitIndex].notificationDays[i]) {
@@ -346,7 +372,6 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
                     PendingIntent.getBroadcast(applicationContext, habit.id + i, alarmIntent, 0)
                 if (pendingIntent != null) {
                     alarmManager.cancel(pendingIntent)
-                    Log.e("Show Habit:", "Deleted intent")
                 }
             }
         }
@@ -363,30 +388,8 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
     }
 
     /*
-    fun notificationTest(){
-        var alarmManager =
-            getSystemService(ALARM_SERVICE) as AlarmManager
-        var alarmIntent = Intent(this, ReminderBroadcast::class.java).apply {
-
-        }
-
-        var pendingIntent =
-            PendingIntent.getBroadcast(applicationContext, habit.id + i, alarmIntent, 0)
-
-        if (pendingIntent != null) {
-            alarmManager.cancel(pendingIntent)
-        }
-
-        alarmManager.setRepeating(
-            AlarmManager.RTC_WAKEUP,
-            System.currentTimeMillis() + 3000,
-            AlarmManager.INTERVAL_FIFTEEN_MINUTES,
-            pendingIntent
-        )
-    }
-
+    Creates notification for habit
      */
-
     fun notificationPopUp(
         notification: Boolean,
         notificationDays: BooleanArray,
@@ -411,18 +414,17 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
                 }
 
                 if (notificationDays[i]) {
-                    val dateFormat = SimpleDateFormat("HH:mm")
-                    var dateObject = dateFormat.parse(notificationTime)
                     var dateHour = notificationTime.substring(0, 2).toInt()
                     var dateMinute = notificationTime.substring(3, 5).toInt()
 
                     var calendar = Calendar.getInstance().apply {
-                        set(Calendar.DAY_OF_WEEK, i + 1)
                         set(Calendar.HOUR_OF_DAY, dateHour)
                         set(Calendar.MINUTE, dateMinute)
                     }
 
-                    Log.d("Date", calendar.time.toString())
+                    while (calendar.get(Calendar.DAY_OF_WEEK) != i + 1) {
+                        calendar.add(Calendar.DATE, 1)
+                    }
 
                     alarmManager.setInexactRepeating(
                         AlarmManager.RTC_WAKEUP,
@@ -446,12 +448,22 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
         }
     }
 
-    fun getNotificationString(): String{
+    /*
+    Gets the string to display which days and what time the notification is set to appear
+     */
+    private fun getNotificationString(): String{
         var firstItem = true
         var notifString = ""
         var count = 0
         for (i in habit.notificationDays.indices) {
             if (habit.notificationDays[i]) {
+
+                if (firstItem) {
+                    firstItem = false
+                } else {
+                    notifString += ", "
+                }
+
                 when (i) {
                     0 -> notifString += getString(R.string.sunday)
                     1 -> notifString += getString(R.string.monday)
@@ -461,26 +473,19 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
                     5 -> notifString += getString(R.string.friday)
                     6 -> notifString += getString(R.string.saturday)
                 }
-                if (firstItem) {
-                    firstItem = false
-                } else {
-                    notifString += ", "
-                }
                 count++
             }
-        }
-
-        if (count == 1) {
-            notifString = notifString.substring(0, notifString.length - 1)
-        } else if (count == 0) {
-            notifString = "Off"
         }
 
         if (count == 7) {
             notifString = getString(R.string.everyday)
         }
 
-        notifString += " at " + habit.notificationTime
+        if (count == 0) {
+            notifString = "Off"
+        } else {
+            notifString += " at " + habit.notificationTime
+        }
 
         return notifString
     }

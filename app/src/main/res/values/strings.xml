@@ -40,10 +40,17 @@
     <string name="show_habit_total">\nCompletions</string>
     <string name="show_habit_calendar">History</string>
     <string name="show_habit_streak">Streaks</string>
+    <string name="show_habit_completion_rate">Completion Rate</string>
+
+    <string name="completion_rate_missed">Missed</string>
+    <string name="completion_rate_extra_missed">Extra Missed</string>
+    <string name="completion_rate_completed">Completed</string>
+    <string name="completion_rate_extra">Extra</string>
 
     <string name="confirmation_popup_title">Confirm</string>
     <string name="confirmation_popup_text">Are you sure you want to delete this habit permanently?</string>
     <string name="confirmation_popup_delete">Delete</string>
 
     <string name="settings_notification">Notification</string>
+    <string name="notification_complete">Complete</string>
 </resources>

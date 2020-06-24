@@ -177,6 +177,9 @@ class HabitDialog(isNew: Boolean, habitIndex: Int) : AppCompatDialogFragment() {
         return builder.create()
     }
 
+    /*
+    Closes the dialog and creates the new habit
+     */
     private fun closeNewHabitPopup(v: View) {
         if (v.id == R.id.save_text) {
             var colour = colourIdToString(colourRadioGroup.checkedRadioButtonId)
@@ -215,6 +218,18 @@ class HabitDialog(isNew: Boolean, habitIndex: Int) : AppCompatDialogFragment() {
             } else if (numerator == denominator) {
                 numerator = 1
                 denominator = 1
+            }
+
+            var dayOfWeekFilled = true
+            dayOfWeek@ for (i in habit.notificationDays) {
+                if (i){
+                    dayOfWeekFilled = false
+                    break@dayOfWeek
+                }
+            }
+
+            if (!dayOfWeekFilled){
+                notification = false
             }
 
             var habit = Habit(
