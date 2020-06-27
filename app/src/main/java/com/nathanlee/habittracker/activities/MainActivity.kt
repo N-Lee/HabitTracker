@@ -31,8 +31,6 @@ import java.util.*
 import kotlin.math.ceil
 import kotlin.math.floor
 
-//TODO: Text when there are no habits
-
 class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
     VerticalScroll.ScrollViewListener, HorizontalScroll.ScrollViewListener {
 
@@ -156,6 +154,7 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         createHeader()
         initializeColumnHeaderTable()
         createEmptyRow()
+
         for (i in 0 until habitList.size) {
             initializeRowForTable(i)
             addRowToRowHeader(habitList[i], i)
@@ -167,24 +166,26 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         createNotificationChannel()
 
         tableHorizontalScrollView.viewTreeObserver
-            .addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            .addOnGlobalLayoutListener(
+                object : ViewTreeObserver.OnGlobalLayoutListener {
 
-                override fun onGlobalLayout() {
-                    tableHorizontalScrollView.viewTreeObserver
-                        .removeOnGlobalLayoutListener(this)
-                    tableHorizontalScrollView.fullScroll(HorizontalScrollView.FOCUS_RIGHT)
-                }
-            })
+                    override fun onGlobalLayout() {
+                        tableHorizontalScrollView.viewTreeObserver
+                            .removeOnGlobalLayoutListener(this)
+                        tableHorizontalScrollView.fullScroll(HorizontalScrollView.FOCUS_RIGHT)
+                    }
+                })
 
         columnHeaderHorizontalScrollView.viewTreeObserver
-            .addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            .addOnGlobalLayoutListener(
+                object : ViewTreeObserver.OnGlobalLayoutListener {
 
-                override fun onGlobalLayout() {
-                    columnHeaderHorizontalScrollView.viewTreeObserver
-                        .removeOnGlobalLayoutListener(this)
-                    columnHeaderHorizontalScrollView.fullScroll(HorizontalScrollView.FOCUS_RIGHT)
-                }
-            })
+                    override fun onGlobalLayout() {
+                        columnHeaderHorizontalScrollView.viewTreeObserver
+                            .removeOnGlobalLayoutListener(this)
+                        columnHeaderHorizontalScrollView.fullScroll(HorizontalScrollView.FOCUS_RIGHT)
+                    }
+                })
 
         val onTouchListener: View.OnTouchListener = View.OnTouchListener { v, event ->
             when (event.action) {

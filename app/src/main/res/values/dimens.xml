@@ -15,6 +15,7 @@
     <dimen name="button_margin">8dp</dimen>
     <dimen name="divider_margin">15dp</dimen>
 
+    <dimen name="show_habit_side_padding_description">10dp</dimen>
     <dimen name="show_habit_left_padding">10dp</dimen>
     <dimen name="show_habit_top_padding">10dp</dimen>
     <dimen name="show_habit_bottom_padding">10dp</dimen>

@@ -13,7 +13,9 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -34,8 +36,10 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
     private lateinit var calendarView: CalendarView
     private lateinit var streakChartView: StreakChartView
     private lateinit var completionRateChartView: CompletionRateChartView
+    private lateinit var descriptionLayout: RelativeLayout
     private lateinit var streakLayout: LinearLayout
     private lateinit var completeRateLayout: LinearLayout
+    private lateinit var descriptionText: TextView
     private lateinit var overviewText: TextView
     private lateinit var firstDayText: TextView
     private lateinit var totalText: TextView
@@ -87,6 +91,15 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
 
         streakLayout = findViewById(R.id.chart_layout)
         completeRateLayout = findViewById(R.id.completion_rate_chart_layout)
+
+        descriptionLayout = findViewById<RelativeLayout>(R.id.description_layout)
+        descriptionText = findViewById(R.id.description_text)
+        descriptionText.setTextColor(habitColour)
+        if (habit.description.replace("\\s".toRegex(), "") == ""){
+            descriptionLayout.visibility = View.GONE
+        } else {
+            descriptionText.text = habit.description
+        }
 
         overviewText = findViewById(R.id.overview_text)
         overviewText.setTextColor(habitColour)
@@ -307,6 +320,13 @@ class ShowHabitActivity : AppCompatActivity(), HabitDialog.HabitDialogListener {
     Updates the overview tab's texts when calendar is update
      */
     fun updateCompletionText() {
+        descriptionText.setTextColor(habitColour)
+        if (habit.description.replace("\\s".toRegex(), "") == ""){
+            descriptionLayout.visibility = View.GONE
+        } else {
+            descriptionText.text = habit.description
+        }
+
         firstDayText = findViewById(R.id.overview_first_day)
         var firstCompletion = if (habit.streaks.streaks.isEmpty()) {
             "Not started"

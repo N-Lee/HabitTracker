@@ -19,12 +19,34 @@
             android:orientation="vertical">
 
             <RelativeLayout
+                android:id="@+id/description_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/show_habit_spacing_between_layouts"
+                android:gravity="center"
+                android:paddingTop="@dimen/show_habit_left_padding"
+                android:paddingBottom="@dimen/show_habit_bottom_padding">
+
+                <TextView
+                    android:id="@+id/description_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="This is long text because I want to see how it looks whenever I have enough text"
+                    android:gravity="center_horizontal"
+                    android:paddingRight="@dimen/show_habit_side_padding_description"
+                    android:paddingLeft="@dimen/show_habit_side_padding_description"
+                    android:textColor="@color/dark_theme_grey" />
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:id="@+id/overview_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/show_habit_spacing_between_layouts"
                 android:background="@color/dark_theme_table_background"
-                android:paddingBottom="@dimen/show_habit_left_padding">
+                android:paddingBottom="@dimen/show_habit_bottom_padding">
 
                 <TextView
                     android:id="@+id/overview_text"
@@ -42,8 +64,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/overview_text"
-                    android:paddingBottom="@dimen/show_habit_bottom_padding"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:paddingBottom="@dimen/show_habit_bottom_padding">
 
                     <TextView
                         android:id="@+id/overview_first_day"
