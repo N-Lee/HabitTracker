@@ -43,6 +43,9 @@ class CalendarAdapter(
 
     }
 
+    /*
+    Applies the colour for the days that have been completed
+     */
     private fun setColour(completionStatus: Int, view: View?) {
         when (completionStatus) {
             1 -> {

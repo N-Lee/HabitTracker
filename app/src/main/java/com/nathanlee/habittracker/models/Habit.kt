@@ -346,4 +346,41 @@ class Habit(
         this.notificationTime = notificationTime
         this.notificationDays = notificationDays
     }
+
+    /*
+    Get the number of days each type of completions have been done
+     */
+    fun completionRate(): MutableList<Float>{
+        lateinit var firstDay: Timestamp
+        var completionsTypeCount = mutableListOf(0f, 0f, 0f, 0f)
+        var count = 0
+
+        if (streaks.streaks.isEmpty()){
+            return completionsTypeCount
+        } else {
+            firstDay = streaks.streaks[0].start
+        }
+
+        var firstCompletion = completions.find(0, completions.completions.size, firstDay)
+
+        for (i in firstCompletion until completions.completions.size){
+            count++
+            when (completions.completions[i].status){
+                0 -> {
+                    completionsTypeCount[0]++
+                }
+                1 -> {
+                    completionsTypeCount[1]++
+                }
+                2 -> {
+                    completionsTypeCount[2]++
+                }
+                3 -> {
+                    completionsTypeCount[3]++
+                }
+            }
+        }
+
+        return completionsTypeCount
+    }
 }

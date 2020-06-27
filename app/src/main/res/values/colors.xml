@@ -13,6 +13,22 @@
 
     <color name="dark_theme_table_background">#525151</color>
 
+    <color name="dark_theme_very_dark_grey">#535353</color>
+    <color name="dark_theme_very_dark_green">#3b8141</color>
+    <color name="dark_theme_very_dark_orange">#9f2d2d</color>
+    <color name="dark_theme_very_dark_pink">#AA1C4C</color>
+    <color name="dark_theme_very_dark_purple">#6241a8</color>
+    <color name="dark_theme_very_dark_blue">#1e6fb0</color>
+    <color name="dark_theme_very_dark_yellow">#837921</color>
+
+    <color name="dark_theme_dark_grey">#767676</color>
+    <color name="dark_theme_dark_green">#5ea464</color>
+    <color name="dark_theme_dark_orange">#C25050</color>
+    <color name="dark_theme_dark_pink">#CD3F6F</color>
+    <color name="dark_theme_dark_purple">#8564CB</color>
+    <color name="dark_theme_dark_blue">#4192D3</color>
+    <color name="dark_theme_dark_yellow">#A69C44</color>
+
     <color name="dark_theme_grey">#999999</color>
     <color name="dark_theme_green">#81C784</color>
     <color name="dark_theme_orange">#E57373</color>
@@ -21,12 +37,20 @@
     <color name="dark_theme_blue">#64B5F6</color>
     <color name="dark_theme_yellow">#C9BF67</color>
 
-    <color name="dark_theme_light_grey">#66999999</color>
-    <color name="dark_theme_light_green">#6681C784</color>
-    <color name="dark_theme_light_orange">#66E57373</color>
-    <color name="dark_theme_light_pink">#66F06292</color>
-    <color name="dark_theme_light_purple">#66A887EE</color>
-    <color name="dark_theme_light_blue">#6664B5F6</color>
-    <color name="dark_theme_light_yellow">#66C9BF67</color>
+    <color name="dark_theme_light_grey">#bdbdbd</color>
+    <color name="dark_theme_light_green">#add1ad</color>
+    <color name="dark_theme_light_orange">#f09693</color>
+    <color name="dark_theme_light_pink">#f78dac</color>
+    <color name="dark_theme_light_purple">#bfa4f1</color>
+    <color name="dark_theme_light_blue">#8ec5f8</color>
+    <color name="dark_theme_light_yellow">#d4cb88</color>
+
+    <color name="dark_theme_transparent_grey">#66999999</color>
+    <color name="dark_theme_transparent_green">#6681C784</color>
+    <color name="dark_theme_transparent_orange">#66E57373</color>
+    <color name="dark_theme_transparent_pink">#66F06292</color>
+    <color name="dark_theme_transparent_purple">#66A887EE</color>
+    <color name="dark_theme_transparent_blue">#6664B5F6</color>
+    <color name="dark_theme_transparent_yellow">#66C9BF67</color>
 
 </resources>
