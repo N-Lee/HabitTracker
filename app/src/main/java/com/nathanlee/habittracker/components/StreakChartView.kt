@@ -127,9 +127,6 @@ class StreakChartView(var habitIndex: Int, var streakChart: BarChart, var contex
         streakChart.invalidate()
     }
 
-    /*
-    Updates the colour of the chart based off the habit colour
-     */
     fun refreshColour() {
         colour = (ColourManager.selectColour(
             HabitManager.habitList[habitIndex].colour,

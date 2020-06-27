@@ -145,34 +145,6 @@
                 </LinearLayout>
             </RelativeLayout>
 
-            <RelativeLayout
-                android:id="@+id/completion_rate_layout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="@dimen/show_habit_spacing_between_layouts"
-                android:background="@color/dark_theme_table_background">
-
-                <TextView
-                    android:id="@+id/completion_rate_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/show_habit_left_padding"
-                    android:paddingTop="@dimen/show_habit_top_padding"
-                    android:text="@string/show_habit_completion_rate"
-                    android:textSize="@dimen/show_habit_view_text" />
-
-                <LinearLayout
-                    android:id="@+id/completion_rate_chart_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_below="@id/completion_rate_text">
-
-                    <com.github.mikephil.charting.charts.PieChart
-                        android:id="@+id/completion_rate_chart"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
-                </LinearLayout>
-            </RelativeLayout>
 
         </LinearLayout>
     </ScrollView>

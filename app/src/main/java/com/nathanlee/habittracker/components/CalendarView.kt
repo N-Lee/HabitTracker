@@ -16,8 +16,7 @@ import com.nathanlee.habittracker.activities.ShowHabitActivity
 import com.nathanlee.habittracker.components.HabitManager.Companion.editLock
 import com.nathanlee.habittracker.components.HabitManager.Companion.todayDate
 
-class CalendarView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs),
-    CalendarAdapter.OnDateListener {
+class CalendarView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs), CalendarAdapter.OnDateListener {
     private lateinit var header: LinearLayout
     private lateinit var previousButton: ImageView
     private lateinit var nextButton: ImageView
@@ -39,9 +38,6 @@ class CalendarView(context: Context, attrs: AttributeSet) : LinearLayout(context
         initializeButtons()
     }
 
-    /*
-    Toggles between whether the habit has been completed on tapped date
-     */
     override fun onDateClick(position: Int) {
         if (!editLock) {
             editLock = true
@@ -66,9 +62,9 @@ class CalendarView(context: Context, attrs: AttributeSet) : LinearLayout(context
         }
     }
 
-    /*
- Find all the UI views
- */
+        /*
+     Find all the UI views
+     */
     private fun findUIViews() {
         header = findViewById(R.id.date_display_linear_layout)
         previousButton = findViewById(R.id.calendar_previous_button)
@@ -97,10 +93,7 @@ class CalendarView(context: Context, attrs: AttributeSet) : LinearLayout(context
         recyclerView.adapter = calendarAdapter
     }
 
-    /*
-    Updates the calendar text when changing months
-     */
-    fun updateCalendar(date: Timestamp) {
+    fun updateCalendar(date: Timestamp){
         val year = date.yearInt
         val month = date.monthString(date)
         textDisplayMonth.text = "$month"
@@ -112,10 +105,7 @@ class CalendarView(context: Context, attrs: AttributeSet) : LinearLayout(context
         calendarAdapter.notifyDataSetChanged()
     }
 
-    /*
-    Gets the completions for the month that is displayed
-     */
-    private fun getCompletions(today: Timestamp): MutableList<Completion> {
+    private fun getCompletions(today: Timestamp): MutableList<Completion>{
         val emptyDate = Timestamp("00/00/0000")
         val completions = HabitManager.habitList[habitIndex].completions
         var index = completions.find(0, completions.completions.size, today)
@@ -156,7 +146,7 @@ class CalendarView(context: Context, attrs: AttributeSet) : LinearLayout(context
             }
         }
 
-        while (days.size < 35) {
+        while (days.size < 35){
             days.add(Completion(emptyDate))
         }
 

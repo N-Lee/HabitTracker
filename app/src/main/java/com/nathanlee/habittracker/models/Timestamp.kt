@@ -88,7 +88,7 @@ data class Timestamp(var date: String) {
     /*
     Checks if this timestamp is during a leap year
      */
-    private fun isLeapYear(): IntArray {
+    fun isLeapYear(): IntArray {
         if (yearInt % 4 == 0 && (yearInt % 100 != 0 || yearInt % 400 == 100)) {
             return intArrayOf(31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
         }
@@ -148,6 +148,66 @@ data class Timestamp(var date: String) {
     }
 
     /*
+    To get the day of week when changing Calendar objects
+     */
+    fun getCalendarDayOfWeekIndex(day: Timestamp): Int {
+        val dayString = getDayOfWeek(day)
+        var dayInt = 7 // 1 = Monday ... 7 = Sunday
+        when (dayString) {
+            "Mon" -> dayInt = 1
+            "Tue" -> dayInt = 2
+            "Wed" -> dayInt = 3
+            "Thu" -> dayInt = 4
+            "Fri" -> dayInt = 5
+            "Sat" -> dayInt = 6
+        }
+        return dayInt
+    }
+
+    /*
+    Add "number" amount of days and returns the date
+     */
+    fun getDaysAfter(number: Int): Timestamp {
+        var year = yearInt
+        var month = monthInt
+        var day = dayInt + number
+        var daysInMonth: IntArray = isLeapYear()
+
+        if (isLeapYear(year)) {
+            daysInMonth = intArrayOf(31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+        } else {
+            daysInMonth = intArrayOf(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+        }
+
+        while (day > daysInMonth[month - 1]) {
+
+            day -= daysInMonth[month - 1]
+            month++
+
+            if (month > 12) {
+
+                month = 1
+                ++year
+
+                if (isLeapYear(year)) {
+                    daysInMonth = intArrayOf(31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+                } else {
+                    daysInMonth = intArrayOf(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+                }
+
+            }
+
+
+        }
+
+        val yearFormat = String.format("%04d", year)
+        val monthFormat = String.format("%02d", month)
+        val dayFormat = String.format("%02d", day)
+
+        return Timestamp("$dayFormat/$monthFormat/$yearFormat")
+    }
+
+    /*
     Subtract "number" amount of days and returns the date
      */
     fun getDaysBefore(number: Int): Timestamp {
@@ -184,9 +244,6 @@ data class Timestamp(var date: String) {
         return Timestamp("$dayFormat/$monthFormat/$yearFormat")
     }
 
-    /*
-    Get the month after the given date
-     */
     fun getNextMonth(date: Timestamp): Timestamp {
         var year = yearInt
         var month = monthInt + 1
@@ -204,9 +261,6 @@ data class Timestamp(var date: String) {
         return Timestamp("$dayFormat/$monthFormat/$yearFormat")
     }
 
-    /*
-    Gets the month before the given date
-     */
     fun getPreviousMonth(date: Timestamp): Timestamp {
         var year = yearInt
         var month = monthInt - 1
@@ -224,17 +278,21 @@ data class Timestamp(var date: String) {
         return Timestamp("$dayFormat/$monthFormat/$yearFormat")
     }
 
-    /*
-    Checks how many days there are in the given month
-     */
     fun monthLength(date: Timestamp): Int {
         var daysInMonth: IntArray = date.isLeapYear()
         return daysInMonth[monthInt - 1]
     }
 
     /*
-    Given a month's number, return the month's name
+    Given two dates, determines if this timestamp falls between the two given dates (inclusive)
      */
+    fun isWithin(start: Timestamp, end: Timestamp): Boolean {
+        if (start.compareTo(this) != 1 && end.compareTo(this) != -1) {
+            return true
+        }
+        return false
+    }
+
     fun monthString(date: Timestamp): String {
         when (date.monthInt) {
             1 -> return "Jan"
