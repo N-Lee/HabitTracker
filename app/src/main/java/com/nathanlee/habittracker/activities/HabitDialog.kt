@@ -220,10 +220,10 @@ class HabitDialog(isNew: Boolean, habitIndex: Int) : AppCompatDialogFragment() {
                 denominator = 1
             }
 
-            var dayOfWeekFilled = true
-            dayOfWeek@ for (i in habit.notificationDays) {
+            var dayOfWeekFilled = false
+            dayOfWeek@ for (i in notificationDays) {
                 if (i){
-                    dayOfWeekFilled = false
+                    dayOfWeekFilled = true
                     break@dayOfWeek
                 }
             }

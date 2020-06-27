@@ -13,6 +13,7 @@ import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.nathanlee.habittracker.R
 import com.nathanlee.habittracker.components.HabitManager.Companion.editLock
 import com.nathanlee.habittracker.components.HabitManager.Companion.habitList
 import com.nathanlee.habittracker.components.HabitManager.Companion.managerDate
@@ -82,7 +83,7 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(com.nathanlee.habittracker.R.layout.activity_main)
+        setContentView(R.layout.activity_main)
 
         val actionBar = supportActionBar
         actionBar!!.title = "Habit"
@@ -91,7 +92,7 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
             ColorDrawable(
                 ContextCompat.getColor(
                     baseContext,
-                    com.nathanlee.habittracker.R.color.dark_theme_actionbar
+                    R.color.dark_theme_actionbar
                 )
             )
         )
@@ -125,7 +126,7 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
                     view.setBackgroundColor(
                         ContextCompat.getColor(
                             applicationContext,
-                            com.nathanlee.habittracker.R.color.dark_theme_table_background
+                            R.color.dark_theme_table_background
                         )
                     )
                 } else {
@@ -143,7 +144,7 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
             }
         }
 
-        mainRelativeLayout = findViewById(com.nathanlee.habittracker.R.id.main_relative_layout)
+        mainRelativeLayout = findViewById(R.id.main_relative_layout)
         getDimension()
         initializeRelativeLayout()
         initializeScroll()
@@ -226,20 +227,15 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(com.nathanlee.habittracker.R.menu.main, menu)
+        menuInflater.inflate(R.menu.main, menu)
 
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            com.nathanlee.habittracker.R.id.add_habit_app_bar -> {
+            R.id.add_habit_app_bar -> {
                 openHabitDialog()
-            }
-
-            com.nathanlee.habittracker.R.id.settings_app_bar -> {
-                var startIntent = Intent(applicationContext, SettingsActivity::class.java)
-                startActivity(startIntent)
             }
         }
 
@@ -335,20 +331,20 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
             RelativeLayout.LayoutParams(rightRelativeLayoutWidth, bottomRelativeLayoutHeight)
 
         headerRelativeLayout = RelativeLayout(applicationContext)
-        headerRelativeLayout.id = com.nathanlee.habittracker.R.id.header_relative_layout
+        headerRelativeLayout.id = R.id.header_relative_layout
         headerRelativeLayout.setPadding(0, 0, 0, 0)
 
         columnHeaderRelativeLayout = RelativeLayout(applicationContext)
         columnHeaderRelativeLayout.id =
-            com.nathanlee.habittracker.R.id.column_header_relative_layout
+            R.id.column_header_relative_layout
         columnHeaderRelativeLayout.setPadding(0, 0, 0, 0)
 
         rowHeaderRelativeLayout = RelativeLayout(applicationContext)
-        rowHeaderRelativeLayout.id = com.nathanlee.habittracker.R.id.row_header_relative_layout
+        rowHeaderRelativeLayout.id = R.id.row_header_relative_layout
         rowHeaderRelativeLayout.setPadding(0, 0, 0, 0)
 
         tableRelativeLayout = RelativeLayout(applicationContext)
-        tableRelativeLayout.id = com.nathanlee.habittracker.R.id.table_relative_layout
+        tableRelativeLayout.id = R.id.table_relative_layout
         tableRelativeLayout.setPadding(0, 0, 0, 0)
 
         headerRelativeLayout.layoutParams =
@@ -358,7 +354,7 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
 
         layoutParamsColumnHeaderLayout.addRule(
             RelativeLayout.RIGHT_OF,
-            com.nathanlee.habittracker.R.id.header_relative_layout
+            R.id.header_relative_layout
         )
         columnHeaderRelativeLayout.layoutParams = layoutParamsColumnHeaderLayout
         this.mainRelativeLayout.addView(columnHeaderRelativeLayout)
@@ -366,18 +362,18 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
 
         layoutParamsRowHeaderLayout.addRule(
             RelativeLayout.BELOW,
-            com.nathanlee.habittracker.R.id.header_relative_layout
+            R.id.header_relative_layout
         )
         rowHeaderRelativeLayout.layoutParams = layoutParamsRowHeaderLayout
         this.mainRelativeLayout.addView(rowHeaderRelativeLayout)
 
         layoutParamsTableLayout.addRule(
             RelativeLayout.BELOW,
-            com.nathanlee.habittracker.R.id.column_header_relative_layout
+            R.id.column_header_relative_layout
         )
         layoutParamsTableLayout.addRule(
             RelativeLayout.RIGHT_OF,
-            com.nathanlee.habittracker.R.id.row_header_relative_layout
+            R.id.row_header_relative_layout
         )
         tableRelativeLayout.layoutParams = layoutParamsTableLayout
         this.mainRelativeLayout.addView(tableRelativeLayout)
@@ -462,7 +458,7 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
 
         columnHeaderTableLayout = TableLayout(applicationContext)
         columnHeaderTableLayout.setPadding(0, 0, 0, 0)
-        columnHeaderTableLayout.id = com.nathanlee.habittracker.R.id.column_header_table_layout
+        columnHeaderTableLayout.id = R.id.column_header_table_layout
 
         rowHeaderTableLayout = TableLayout(applicationContext)
         rowHeaderTableLayout.setPadding(0, 0, 0, 0)
@@ -474,7 +470,7 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         headerTableLayout.setBackgroundColor(
             ContextCompat.getColor(
                 applicationContext,
-                com.nathanlee.habittracker.R.color.dark_theme_background
+                R.color.dark_theme_background
             )
         )
         this.headerRelativeLayout.addView(headerTableLayout)
@@ -483,7 +479,7 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         columnHeaderTableLayout.setBackgroundColor(
             ContextCompat.getColor(
                 applicationContext,
-                com.nathanlee.habittracker.R.color.dark_theme_background
+                R.color.dark_theme_background
             )
         )
         this.columnHeaderHorizontalScrollView.addView(columnHeaderTableLayout)
@@ -502,7 +498,7 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         val tableName = TextView(applicationContext)
 
         tableName.textSize =
-            resources.getDimension(com.nathanlee.habittracker.R.dimen.cell_text_size)
+            resources.getDimension(R.dimen.cell_text_size)
 
         tableRow = TableRow(applicationContext)
         tableRow.layoutParams = layoutParamsTableRow
@@ -538,17 +534,18 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         }
         val layoutParamsTableRow =
             TableRow.LayoutParams(CELL_WIDTH, topRelativeLayoutHeight)
-        val HEADER_TEXT_VIEW = TextView(applicationContext)
+        val headerTextView = TextView(applicationContext)
 
         newTableRow.setPadding(3, 3, 3, 4)
         newTableRow.layoutParams = layoutParamsTableRow
 
-        HEADER_TEXT_VIEW.text = text
-        HEADER_TEXT_VIEW.gravity = Gravity.CENTER_HORIZONTAL or Gravity.CENTER_VERTICAL
-        HEADER_TEXT_VIEW.textSize =
-            resources.getDimension(com.nathanlee.habittracker.R.dimen.header_cell_text_size)
+        headerTextView.text = text
+        headerTextView.gravity = Gravity.CENTER_HORIZONTAL or Gravity.CENTER_VERTICAL
+        headerTextView.textSize =
+            resources.getDimension(R.dimen.header_cell_text_size)
+        headerTextView.setTextColor(resources.getColor(R.color.dark_theme_title))
 
-        newTableRow.addView(HEADER_TEXT_VIEW)
+        newTableRow.addView(headerTextView)
         newTableRow.tag = id
 
         tableRowB.addView(newTableRow)
@@ -574,7 +571,7 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         newTableRow.setBackgroundColor(
             ContextCompat.getColor(
                 applicationContext,
-                com.nathanlee.habittracker.R.color.dark_theme_table_background
+                R.color.dark_theme_table_background
             )
         )
         newTableRow.setPadding(3, 3, 3, 4)
@@ -583,7 +580,7 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
         headerName.setPadding(20, 0, 0, 0)
         headerName.text = habit.name
         headerName.textSize =
-            resources.getDimension(com.nathanlee.habittracker.R.dimen.cell_text_size)
+            resources.getDimension(R.dimen.cell_text_size)
         headerName.setTextColor(
             ColourManager.selectColour(
                 habit.colour,
@@ -652,7 +649,7 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
             tableRow.setBackgroundColor(
                 ContextCompat.getColor(
                     applicationContext,
-                    com.nathanlee.habittracker.R.color.dark_theme_table_background
+                    R.color.dark_theme_table_background
                 )
             )
         }
@@ -762,6 +759,7 @@ class MainActivity : AppCompatActivity(), HabitDialog.HabitDialogListener,
                     var calendar = Calendar.getInstance().apply {
                         set(Calendar.HOUR_OF_DAY, dateHour)
                         set(Calendar.MINUTE, dateMinute)
+                        set(Calendar.SECOND, 0)
                     }
 
                     while (calendar.get(Calendar.DAY_OF_WEEK) != i + 1) {

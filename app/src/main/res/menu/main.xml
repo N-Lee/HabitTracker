@@ -7,10 +7,4 @@
         app:showAsAction="always"
         android:orderInCategory="100"
         android:icon="@drawable/add_habit_image"/>
-
-    <item android:title="Settings"
-        android:id="@+id/settings_app_bar"
-        android:orderInCategory="101"
-        app:showAsAction="always"
-        android:icon="@drawable/settings_button_image"/>
 </menu>
